@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Security.AccessControl;
 
 namespace HTMLDocumentation
 {
@@ -26,8 +27,9 @@ namespace HTMLDocumentation
             Assembly assembly = Assembly.Load("HTMLDocumentation");
             //Assembly assembly = Assembly.LoadFile(absoluteDirectory);
 
-            string docsDirectory = @"C:\Users\alawi\Documents\\Documentation\\" + assembly.GetName().Name;
+            string docsDirectory = @"C:\Users\Alan\Documents\Documentation\" + assembly.GetName().Name;
             Directory.CreateDirectory(docsDirectory);
+
             docsDirectory += "\\";
 
             string lastName = "";
@@ -41,7 +43,7 @@ namespace HTMLDocumentation
                 }
             }
 
-            Process.Start(@"C:\Program Files\Google\Chrome\Application\chrome.exe", lastName);
+            Process.Start(@"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe", lastName);
         }
 
         // Need assembly info but also file structure

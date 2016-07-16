@@ -55,11 +55,19 @@ namespace HTMLDocumentation
             
             // Methods
             {
-                // Write public instance methods declared by this type
-                WriteMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                WriteLine("<h2>Public Methods</h2>");
 
-                // Write non public instance methods declared by this type
-                WriteMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                Indent();
+                    // Write public instance methods declared by this type
+                    WriteMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                UnIndent();
+
+                WriteLine("<h2>Non Public Methods</h2>");
+
+                Indent();
+                    // Write non public instance methods declared by this type
+                    WriteMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                UnIndent();
             }
 
             UnIndent();
@@ -107,6 +115,22 @@ namespace HTMLDocumentation
         /// </summary>
         private void WriteMethod(MethodInfo method)
         {
+            ParameterInfo[] parameters = method.GetParameters();
+
+            string parametersString = "(";
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                ParameterInfo parameter = parameters[i];
+                parametersString += parameter.ParameterType.Name + " " + parameter.Name;
+
+                // Add the delimiter if we have arguments left
+                if (i < parameters.Length - 1)
+                {
+                    parametersString += ", ";
+                }
+            }
+            parametersString += ")";
+
             WriteLine("<h4>" + method.Name + "</h4>");
         }
 

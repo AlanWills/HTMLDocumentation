@@ -4,3 +4,9 @@ C:\Users\alawi\Documents\Visual Studio 2015\Projects\HTMLDocumentation\HTMLDocum
 C:\Users\alawi\Documents\Visual Studio 2015\Projects\HTMLDocumentation\HTMLDocumentation\obj\Debug\HTMLDocumentation.csprojResolveAssemblyReference.cache
 C:\Users\alawi\Documents\Visual Studio 2015\Projects\HTMLDocumentation\HTMLDocumentation\obj\Debug\HTMLDocumentation.exe
 C:\Users\alawi\Documents\Visual Studio 2015\Projects\HTMLDocumentation\HTMLDocumentation\obj\Debug\HTMLDocumentation.pdb
+C:\Users\Alan\Documents\Visual Studio 2015\Projects\HTMLDocumentation\bin\Debug\HTMLDocumentation.exe.config
+C:\Users\Alan\Documents\Visual Studio 2015\Projects\HTMLDocumentation\obj\Debug\HTMLDocumentation.exe
+C:\Users\Alan\Documents\Visual Studio 2015\Projects\HTMLDocumentation\obj\Debug\HTMLDocumentation.pdb
+C:\Users\Alan\Documents\Visual Studio 2015\Projects\HTMLDocumentation\bin\Debug\HTMLDocumentation.exe
+C:\Users\Alan\Documents\Visual Studio 2015\Projects\HTMLDocumentation\bin\Debug\HTMLDocumentation.pdb
+C:\Users\Alan\Documents\Visual Studio 2015\Projects\HTMLDocumentation\obj\Debug\HTMLDocumentation.csprojResolveAssemblyReference.cache
