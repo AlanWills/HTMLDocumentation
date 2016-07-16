@@ -36,7 +36,7 @@ namespace HTMLDocumentation
                 // Overwrite the file if it exists
                 using (HTMLWriter writer = new HTMLWriter(docsDirectory, type))
                 {
-                    writer.WriteType(type);
+                    writer.WriteType();
                     lastName = docsDirectory + type.Name + ".html";
                 }
             }
