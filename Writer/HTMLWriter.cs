@@ -15,10 +15,13 @@ namespace HTMLDocumentation
 
         #endregion
 
+        private string DocsDirectory;
+
         public HTMLWriter(string docsDirectory, Type type) :
-            base(docsDirectory + type.Name + ".html", false)
+            base(Path.Combine(docsDirectory, type.Name + ".html"), false)
         {
             Type = type;
+            DocsDirectory = docsDirectory;
         }
 
         public void WriteType()
@@ -28,7 +31,7 @@ namespace HTMLDocumentation
 
             WriteLine("<head>");
             Indent();
-                WriteLine("<link rel=\"stylesheet\" href=\"Styles\\class.css\">");
+                WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectory + "\\Styles\\class.css\">");
                 WriteLine("<title>" + Type.Name + "</title>");
             UnIndent();
             WriteLine("</head>");
@@ -83,8 +86,8 @@ namespace HTMLDocumentation
         /// Utility function for determining whether a method should be written to this type's HTML page.
         /// Returns true if the method was declared inside the type we are writing and is not a getter or setter for a property.
         /// </summary>
-        /// <param name="method"></param>
-        /// <returns></returns>
+        /// <param name="method">The method we should check to write</param>
+        /// <returns>True if we should write the method and false if we should not</returns>
         private bool ShouldWriteMethod(MethodInfo method)
         {
             return Type.Name == method.DeclaringType.Name &&
@@ -148,11 +151,37 @@ namespace HTMLDocumentation
 
             WriteLine(methodString + "</h4>");
 
-            // Construct the html for the comment on the method
-            XPathNavigator path = GetXMLDocNodeForMethod(method);
-            if (path != null)
+            XPathNavigator methodNode = GetXMLDocNodeForMethod(method);
+            if (methodNode != null)
             {
-                WriteLine("<p>" + path.InnerXml + "</p>");
+                // Construct the html for the comment on the method
+                XPathNavigator clone;
+                {
+                    clone = methodNode.Clone();
+                    clone.MoveToChild("summary", "");
+
+                    WriteLine("<p>" + clone.InnerXml + "</p>");
+                }
+
+                // Construct the html for the comments on the parameters
+                {
+                    clone = methodNode.Clone();
+                    XPathNodeIterator childParams = clone.SelectChildren("param", "");
+
+                    while (childParams.MoveNext())
+                    {
+                        WriteLine("<p>" + childParams.Current.GetAttribute("name", "") + " - " + childParams.Current.InnerXml + "</p>");
+                    }
+                }
+
+                // Construct the html for the comment on the return type (if it exists)
+                {
+                    clone = methodNode.Clone();
+                    if (clone.MoveToChild("returns", ""))
+                    {
+                        WriteLine("<p>returns - " + clone.InnerXml + "</p>");
+                    }
+                }
             }
         }
 
@@ -163,6 +192,7 @@ namespace HTMLDocumentation
         /// <param name="method"></param>
         private XPathNavigator GetXMLDocNodeForMethod(MethodInfo method)
         {
+            // Ultimately I think we want to compile the docs ourselves for each class - do this with Process and then see the docs on msdn for compiling docs
             string xmlDocs = Directory.GetCurrentDirectory() + "\\" + Assembly.GetExecutingAssembly().GetName().Name + ".xml";
             XPathDocument documentationXML = new XPathDocument(xmlDocs);
             XPathNavigator nav = documentationXML.CreateNavigator();

@@ -4,23 +4,13 @@
         <name>HTMLDocumentation</name>
     </assembly>
     <members>
-        <member name="T:HTMLDocumentation.Documentation">
-            <summary>
-            Stores a string which describes the object this attribute is attached to
-            </summary>
-        </member>
-        <member name="P:HTMLDocumentation.Documentation.DocString">
-            <summary>
-            The string containing the description for our documentation.
-            </summary>
-        </member>
         <member name="M:HTMLDocumentation.HTMLWriter.ShouldWriteMethod(System.Reflection.MethodInfo)">
             <summary>
             Utility function for determining whether a method should be written to this type's HTML page.
             Returns true if the method was declared inside the type we are writing and is not a getter or setter for a property.
             </summary>
-            <param name="method"></param>
-            <returns></returns>
+            <param name="method">The method we should check to write</param>
+            <returns>True if we should write the method and false if we should not</returns>
         </member>
         <member name="M:HTMLDocumentation.HTMLWriter.WriteMethods(System.Reflection.BindingFlags)">
             <summary>

@@ -28,20 +28,27 @@ namespace HTMLDocumentation
 
         private static void DocumentAssembly(string projectPath)
         {
-            string absoluteDirectory = Directory.GetCurrentDirectory() + "\\..\\..\\" + projectPath;
+            // The full path to the dll
+            DirectoryInfo info = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\..\\..");
+            string dllPath = Path.Combine(info.FullName, projectPath);
             Assembly assembly = Assembly.Load("HTMLDocumentation");
-            //Assembly assembly = Assembly.LoadFile(absoluteDirectory);
+            //Assembly assembly = Assembly.LoadFile(dllPath);
 
-            string docsDirectory = absoluteDirectory + assembly.GetName().Name;
+            // The full path to the root directory of the code - we will use this to mirror the directory tree on our webpage
+            string codeRootDirectory = info.FullName;
+
+            // The directory where we will create the docs
+            string docsDirectory = Path.Combine(dllPath, assembly.GetName().Name + " (Generated)");
             Directory.CreateDirectory(docsDirectory);
-            docsDirectory += "\\";
 
             // Create a directory in the docs directory for the Style sheets
-            Directory.CreateDirectory(docsDirectory + "Styles");
+            string stylesDirectory = Path.Combine(docsDirectory, "Styles");
+            Directory.CreateDirectory(stylesDirectory);
 
             // Copy the style sheets into the documentation directory and override any existing ones
-            File.Copy(absoluteDirectory + "class.css", docsDirectory + "Styles\\class.css", true);
+            File.Copy(Path.Combine(dllPath, "class.css"), Path.Combine(stylesDirectory, "class.css"), true);
 
+            // Create the hmtl page for each class
             foreach (Type type in assembly.GetTypes())
             {
                 // Overwrite the file if it exists
@@ -51,8 +58,38 @@ namespace HTMLDocumentation
                 }
             }
 
+            // Copy the directory structure from the assembly for our html pages
+            DirectoryInfo assemblyDirectory = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\..\\..\\");
+
+            // Look through the directories in the first level of our code structure
+            foreach (DirectoryInfo directory in assemblyDirectory.GetDirectories("*", SearchOption.TopDirectoryOnly))
+            {
+                if (directory.Name == "obj" || directory.Name == "bin" || directory.Name == "Properties")
+                {
+                    // Skip bin and obj - work out how to do this via regex in GetDirectories
+                    continue;
+                }
+
+                // Now iterate through all the files in our valid folders
+                foreach (FileInfo file in directory.GetFiles("*.cs", SearchOption.AllDirectories))
+                {
+                    // We want to extract the relative path from the code root directory and create that relative structure inside the docs directory
+                    string dirName = directory.FullName.Replace(codeRootDirectory, "");
+                    Directory.CreateDirectory(docsDirectory + dirName);
+
+                    // Move the html file from the flat documentation directory to the new folder mirroring the code directory structure
+                    string oldFileHTMLPath = Path.Combine(docsDirectory, file.Name.Replace(file.Extension, "") + ".html");
+                    string newFileHTMLPath = Path.Combine(docsDirectory + dirName, file.Name.Replace(file.Extension, "") + ".html");
+                    Debug.Assert(File.Exists(oldFileHTMLPath));
+
+                    // Copy and delete is easier than moving because we can just overwrite the file if it exists already
+                    File.Copy(oldFileHTMLPath, newFileHTMLPath, true);
+                    File.Delete(oldFileHTMLPath);
+                }
+            }
+
             // Launch the docs in Chrome
-            string lastName = docsDirectory + "HTMLWriter.html";
+            string lastName = Path.Combine(docsDirectory, "Writer", "HTMLWriter.html");
             lastName = lastName.Replace(" ", "%20");
             Process chrome = Process.Start(@"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe", lastName);
 
