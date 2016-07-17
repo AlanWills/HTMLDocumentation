@@ -10,3 +10,4 @@ C:\Users\Alan\Documents\Visual Studio 2015\Projects\HTMLDocumentation\obj\Debug\
 C:\Users\Alan\Documents\Visual Studio 2015\Projects\HTMLDocumentation\bin\Debug\HTMLDocumentation.exe
 C:\Users\Alan\Documents\Visual Studio 2015\Projects\HTMLDocumentation\bin\Debug\HTMLDocumentation.pdb
 C:\Users\Alan\Documents\Visual Studio 2015\Projects\HTMLDocumentation\obj\Debug\HTMLDocumentation.csprojResolveAssemblyReference.cache
+C:\Users\Alan\Documents\Visual Studio 2015\Projects\HTMLDocumentation\bin\Debug\HTMLDocumentation.XML

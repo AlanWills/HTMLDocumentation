@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HTMLDocumentation</name>
+    </assembly>
+    <members>
+        <member name="T:HTMLDocumentation.Documentation">
+            <summary>
+            Stores a string which describes the object this attribute is attached to
+            </summary>
+        </member>
+        <member name="P:HTMLDocumentation.Documentation.DocString">
+            <summary>
+            The string containing the description for our documentation.
+            </summary>
+        </member>
+        <member name="M:HTMLDocumentation.HTMLWriter.ShouldWriteMethod(System.Reflection.MethodInfo)">
+            <summary>
+            Utility function for determining whether a method should be written to this type's HTML page.
+            Returns true if the method was declared inside the type we are writing and is not a getter or setter for a property.
+            </summary>
+            <param name="method"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HTMLDocumentation.HTMLWriter.WriteMethods(System.Reflection.BindingFlags)">
+            <summary>
+            Iterates over all the methods of the current type and attempts to right any methods which satisfy the input
+            flags and also the ShouldWriteMethod.
+            </summary>
+            <param name="filterFlags"></param>
+        </member>
+        <member name="M:HTMLDocumentation.HTMLWriter.WriteMethod(System.Reflection.MethodInfo)">
+            <summary>
+            Writes all the information about a method, including:
+            Parameters
+            Return type
+            Template arguments
+            Whether it is virtual
+            </summary>
+        </member>
+        <member name="M:HTMLDocumentation.HTMLWriter.GetXMLDocNodeForMethod(System.Reflection.MethodInfo)">
+            <summary>
+            Uses the input method to find the appropriate node in the documentation XML file and
+            returns the XPathNavigator at that position.
+            </summary>
+            <param name="method"></param>
+        </member>
+        <member name="M:HTMLDocumentation.HTMLWriter.WriteLine(System.String)">
+            <summary>
+            Overwrite the writeline function with our own implementation that uses the indentation
+            </summary>
+            <param name="line"></param>
+        </member>
+    </members>
+</doc>

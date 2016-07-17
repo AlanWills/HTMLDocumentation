@@ -1,0 +1,25 @@
+﻿#page_title
+{
+    color: blue;
+    text-align: center;
+}
+
+#public_methods
+{
+    color: springgreen;
+}
+
+#non_public_methods
+{
+    color: green;
+}
+
+span.parameter_type 
+{
+    color: cyan;
+}
+
+span.virtual
+{
+    color: darkorange;
+}

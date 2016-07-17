@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Xml.XPath;
 
 namespace HTMLDocumentation
 {
@@ -27,6 +28,7 @@ namespace HTMLDocumentation
 
             WriteLine("<head>");
             Indent();
+                WriteLine("<link rel=\"stylesheet\" href=\"Styles\\class.css\">");
                 WriteLine("<title>" + Type.Name + "</title>");
             UnIndent();
             WriteLine("</head>");
@@ -34,7 +36,7 @@ namespace HTMLDocumentation
             WriteLine("<body>");
             Indent();
                 WriteLine("<header>");
-                WriteLine("<h1>" + Type.Name + "</h1>");
+                WriteLine("<h1 id=\"page_title\">" + Type.Name + " Class</h1>");
                 WriteLine("</header>");
 
             //foreach (FieldInfo property in type.GetFields())
@@ -51,18 +53,19 @@ namespace HTMLDocumentation
              * Also indicate if they are overriding virtual functions (if they are only)
              * Don't write property setters and getters - do that in properties - remove the setters and getters when we iterate over properties?
              * Parameters, return types, template arguments etc.
+             * Document properties, fields, events
              */
-            
+
             // Methods
             {
-                WriteLine("<h2>Public Methods</h2>");
+                WriteLine("<h2 id=\"public_methods\">Public Methods</h2>");
 
                 Indent();
                     // Write public instance methods declared by this type
                     WriteMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
                 UnIndent();
 
-                WriteLine("<h2>Non Public Methods</h2>");
+                WriteLine("<h2 id=\"non_public_methods\">Non Public Methods</h2>");
 
                 Indent();
                     // Write non public instance methods declared by this type
@@ -121,7 +124,8 @@ namespace HTMLDocumentation
             for (int i = 0; i < parameters.Length; i++)
             {
                 ParameterInfo parameter = parameters[i];
-                parametersString += parameter.ParameterType.Name + " " + parameter.Name;
+                parametersString += "<span title=\"Parameter type\" class=\"parameter_type\">" + 
+                    parameter.ParameterType.Name + "</span> <span title=\"Parameter name\">" + parameter.Name + "</span>";
 
                 // Add the delimiter if we have arguments left
                 if (i < parameters.Length - 1)
@@ -131,7 +135,53 @@ namespace HTMLDocumentation
             }
             parametersString += ")";
 
-            WriteLine("<h4>" + method.Name + "</h4>");
+            string methodString = "<h4><span title=\"Method name\">" + method.Name + "</span>" + parametersString;
+            if (method.IsVirtual)
+            {
+                methodString += " <span class=\"virtual\" title=\"Method is virtual or overrides a virtual function\">(Virtual)</span>";
+            }
+
+            WriteLine(methodString + "</h4>");
+
+            XPathNavigator path = GetXMLDocNodeForMethod(method);
+            if (path != null)
+            {
+                WriteLine("<p>" + path.InnerXml + "</p>");
+            }
+        }
+
+        /// <summary>
+        /// Uses the input method to find the appropriate node in the documentation XML file and
+        /// returns the XPathNavigator at that position.
+        /// </summary>
+        /// <param name="method"></param>
+        private XPathNavigator GetXMLDocNodeForMethod(MethodInfo method)
+        {
+            string xmlDocs = Directory.GetCurrentDirectory() + "\\" + Assembly.GetExecutingAssembly().GetName().Name + ".xml";
+            XPathDocument documentationXML = new XPathDocument(xmlDocs);
+            XPathNavigator nav = documentationXML.CreateNavigator();
+
+            nav.MoveToRoot();
+            nav.MoveToFirstChild();
+            nav.MoveToChild("members", "");
+
+            string containsString = "contains(@name, '" + method.Name + "')";
+            int index = 0;
+            foreach (ParameterInfo parameter in method.GetParameters())
+            {
+                if (index < method.GetParameters().Length)
+                {
+                    containsString += " and ";
+                }
+
+                containsString += "contains(@name, '" + parameter.ParameterType.Name + "')";
+                index++;
+            }
+
+            string xPath = "//member[" + containsString + "]";
+            nav = nav.SelectSingleNode(xPath);
+
+            return nav;
         }
 
         /// <summary>
