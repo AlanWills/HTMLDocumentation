@@ -120,6 +120,7 @@ namespace HTMLDocumentation
         {
             ParameterInfo[] parameters = method.GetParameters();
 
+            // Construct the html for the parameters
             string parametersString = "(";
             for (int i = 0; i < parameters.Length; i++)
             {
@@ -135,7 +136,11 @@ namespace HTMLDocumentation
             }
             parametersString += ")";
 
-            string methodString = "<h4><span title=\"Method name\">" + method.Name + "</span>" + parametersString;
+            // Construct the html for the return type
+            string returnTypeString = "<span title=\"Return type\" class=\"return_type\">" + method.ReturnParameter.ParameterType.Name + "</span>";
+
+            // Construct the html for the method name
+            string methodString = "<h4>" + returnTypeString + " <span title=\"Method name\">" + method.Name + "</span>" + parametersString;
             if (method.IsVirtual)
             {
                 methodString += " <span class=\"virtual\" title=\"Method is virtual or overrides a virtual function\">(Virtual)</span>";
@@ -143,6 +148,7 @@ namespace HTMLDocumentation
 
             WriteLine(methodString + "</h4>");
 
+            // Construct the html for the comment on the method
             XPathNavigator path = GetXMLDocNodeForMethod(method);
             if (path != null)
             {

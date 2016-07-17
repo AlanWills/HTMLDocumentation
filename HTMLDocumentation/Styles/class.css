@@ -19,6 +19,11 @@ span.parameter_type
     color: cyan;
 }
 
+span.return_type
+{
+    color: darkmagenta;
+}
+
 span.virtual
 {
     color: darkorange;
