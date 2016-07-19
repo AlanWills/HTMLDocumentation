@@ -4,7 +4,29 @@
         <name>HTMLDocumentation</name>
     </assembly>
     <members>
-        <member name="M:HTMLDocumentation.HTMLWriter.ShouldWriteMethod(System.Reflection.MethodInfo)">
+        <member name="T:HTMLDocumentation.HTMLDirectoryLinkerWriter">
+            <summary>
+            An HTMLWriter which creates a page linking all files and directories in IT'S level only.
+            Also recursively does the same thing for any directory in it's level.
+            </summary>
+        </member>
+        <member name="P:HTMLDocumentation.HTMLDirectoryLinkerWriter.DirectoryInfo">
+            <summary>
+            The directory info for the directory we are linking
+            </summary>
+        </member>
+        <member name="M:HTMLDocumentation.HTMLDirectoryLinkerWriter.WriteDirectory">
+            <summary>
+            Creates an HTML page with links to any page for a class or link page for a directory in this level.
+            Recursively calls to sub directories too.
+            </summary>
+        </member>
+        <member name="T:HTMLDocumentation.HTMLTypeWriter">
+            <summary>
+            An HTMLWriter which specifically writes a class
+            </summary>
+        </member>
+        <member name="M:HTMLDocumentation.HTMLTypeWriter.ShouldWriteMethod(System.Reflection.MethodInfo)">
             <summary>
             Utility function for determining whether a method should be written to this type's HTML page.
             Returns true if the method was declared inside the type we are writing and is not a getter or setter for a property.
@@ -12,14 +34,14 @@
             <param name="method">The method we should check to write</param>
             <returns>True if we should write the method and false if we should not</returns>
         </member>
-        <member name="M:HTMLDocumentation.HTMLWriter.WriteMethods(System.Reflection.BindingFlags)">
+        <member name="M:HTMLDocumentation.HTMLTypeWriter.WriteMethods(System.Reflection.BindingFlags)">
             <summary>
             Iterates over all the methods of the current type and attempts to right any methods which satisfy the input
             flags and also the ShouldWriteMethod.
             </summary>
             <param name="filterFlags"></param>
         </member>
-        <member name="M:HTMLDocumentation.HTMLWriter.WriteMethod(System.Reflection.MethodInfo)">
+        <member name="M:HTMLDocumentation.HTMLTypeWriter.WriteMethod(System.Reflection.MethodInfo)">
             <summary>
             Writes all the information about a method, including:
             Parameters
@@ -28,12 +50,22 @@
             Whether it is virtual
             </summary>
         </member>
-        <member name="M:HTMLDocumentation.HTMLWriter.GetXMLDocNodeForMethod(System.Reflection.MethodInfo)">
+        <member name="M:HTMLDocumentation.HTMLTypeWriter.GetXMLDocNodeForMethod(System.Reflection.MethodInfo)">
             <summary>
             Uses the input method to find the appropriate node in the documentation XML file and
             returns the XPathNavigator at that position.
             </summary>
             <param name="method"></param>
+        </member>
+        <member name="T:HTMLDocumentation.HTMLWriter">
+            <summary>
+            Utility wrapper around a standard stream writer for providing useful functionality when writing HTML
+            </summary>
+        </member>
+        <member name="P:HTMLDocumentation.HTMLWriter.DocsDirectory">
+            <summary>
+            The root directory for the directory tree our documentation will be created in.
+            </summary>
         </member>
         <member name="M:HTMLDocumentation.HTMLWriter.WriteLine(System.String)">
             <summary>

@@ -5,23 +5,21 @@ using System.Xml.XPath;
 
 namespace HTMLDocumentation
 {
-    public class HTMLWriter : StreamWriter
+    /// <summary>
+    /// An HTMLWriter which specifically writes a class
+    /// </summary>
+    public class HTMLTypeWriter : HTMLWriter
     {
         #region Properties and Fields
 
         private Type Type { get; set; }
 
-        private string Indentation { get; set; }
-
         #endregion
 
-        private string DocsDirectory;
-
-        public HTMLWriter(string docsDirectory, Type type) :
-            base(Path.Combine(docsDirectory, type.Name + ".html"), false)
+        public HTMLTypeWriter(Type type) :
+            base(Path.Combine(DocsDirectory, type.Name + ".html"))
         {
             Type = type;
-            DocsDirectory = docsDirectory;
         }
 
         public void WriteType()
@@ -218,30 +216,6 @@ namespace HTMLDocumentation
             nav = nav.SelectSingleNode(xPath);
 
             return nav;
-        }
-
-        /// <summary>
-        /// Overwrite the writeline function with our own implementation that uses the indentation
-        /// </summary>
-        /// <param name="line"></param>
-        private new void WriteLine(string line)
-        {
-            base.WriteLine(Indentation + line);
-        }
-        
-        private void Indent()
-        {
-            Indentation += "\t";
-        }
-
-        private void UnIndent()
-        {
-            Indentation = Indentation.Remove(Indentation.Length - 1);
-        }
-
-        public override void Flush()
-        {
-            base.Flush();
         }
     }
 }

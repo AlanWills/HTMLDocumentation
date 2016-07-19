@@ -39,7 +39,9 @@ namespace HTMLDocumentation
 
             // The directory where we will create the docs
             string docsDirectory = Path.Combine(dllPath, assembly.GetName().Name + " (Generated)");
+            Directory.Delete(docsDirectory, true);  // Deletes the existing documentation folder so we create a fresh one
             Directory.CreateDirectory(docsDirectory);
+            HTMLWriter.DocsDirectory = docsDirectory;
 
             // Create a directory in the docs directory for the Style sheets
             string stylesDirectory = Path.Combine(docsDirectory, "Styles");
@@ -52,7 +54,7 @@ namespace HTMLDocumentation
             foreach (Type type in assembly.GetTypes())
             {
                 // Overwrite the file if it exists
-                using (HTMLWriter writer = new HTMLWriter(docsDirectory, type))
+                using (HTMLTypeWriter writer = new HTMLTypeWriter(type))
                 {
                     writer.WriteType();
                 }
@@ -86,6 +88,13 @@ namespace HTMLDocumentation
                     File.Copy(oldFileHTMLPath, newFileHTMLPath, true);
                     File.Delete(oldFileHTMLPath);
                 }
+            }
+
+            // Now that all of the files have been moved to the correct created directories, we can create linking pages for each directory
+            // Do this by calling a recursive function on each directory starting with our top level
+            using (HTMLDirectoryLinkerWriter writer = new HTMLDirectoryLinkerWriter(new DirectoryInfo(codeRootDirectory)))
+            {
+                writer.WriteDirectory();
             }
 
             // Launch the docs in Chrome
