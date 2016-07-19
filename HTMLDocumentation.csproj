@@ -52,7 +52,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <Content Include="test.html" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="class.css" />

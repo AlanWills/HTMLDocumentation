@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Xml.XPath;
@@ -17,7 +18,7 @@ namespace HTMLDocumentation
         #endregion
 
         public HTMLTypeWriter(Type type) :
-            base(Path.Combine(DocsDirectory, type.Name + ".html"))
+            base(Path.Combine(DocsDirectoryInfo.FullName, type.Name + ".html"))
         {
             Type = type;
         }
@@ -29,51 +30,60 @@ namespace HTMLDocumentation
 
             WriteLine("<head>");
             Indent();
-                WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectory + "\\Styles\\class.css\">");
+            {
+                WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectoryInfo.FullName + "\\Styles\\class.css\">");
                 WriteLine("<title>" + Type.Name + "</title>");
+            }
             UnIndent();
             WriteLine("</head>");
 
             WriteLine("<body>");
             Indent();
+            {
                 WriteLine("<header>");
                 WriteLine("<h1 id=\"page_title\">" + Type.Name + " Class</h1>");
                 WriteLine("</header>");
 
-            //foreach (FieldInfo property in type.GetFields())
-            //{
-            //    if (type.Name == property.DeclaringType.Name)
-            //    {
-            //        WriteLine("<h4>" + property.Name + "</h4>");
-            //    }
-            //}
+                // Write a link back to the linker for the directory this type's .cs file is in
+                FileInfo[] info = CodeDirectoryInfo.GetFiles(Type.Name + ".cs", SearchOption.AllDirectories);
+                Debug.Assert(info.Length == 1);
+                WriteLine("<a href=\"" + info[0].Directory.Name + " Linker.html\">" + info[0].Directory.Name + "</a>");
 
-            /*
-             * Have headers + bookmarks for each section (Instance and static, then subsections of public & non-public)
-             * Going to need to write instance & static of public and non public methods declared in this class.
-             * Also indicate if they are overriding virtual functions (if they are only)
-             * Don't write property setters and getters - do that in properties - remove the setters and getters when we iterate over properties?
-             * Parameters, return types, template arguments etc.
-             * Document properties, fields, events
-             */
+                //foreach (FieldInfo property in type.GetFields())
+                //{
+                //    if (type.Name == property.DeclaringType.Name)
+                //    {
+                //        WriteLine("<h4>" + property.Name + "</h4>");
+                //    }
+                //}
+
+                /*
+                 * Have headers + bookmarks for each section (Instance and static, then subsections of public & non-public)
+                 * Going to need to write instance & static of public and non public methods declared in this class.
+                 * Also indicate if they are overriding virtual functions (if they are only)
+                 * Don't write property setters and getters - do that in properties - remove the setters and getters when we iterate over properties?
+                 * Parameters, return types, template arguments etc.
+                 * Document properties, fields, events
+                 */
 
             // Methods
             {
                 WriteLine("<h2 id=\"public_methods\">Public Methods</h2>");
 
                 Indent();
-                    // Write public instance methods declared by this type
-                    WriteMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                // Write public instance methods declared by this type
+                WriteMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
                 UnIndent();
 
                 WriteLine("<h2 id=\"non_public_methods\">Non Public Methods</h2>");
 
                 Indent();
-                    // Write non public instance methods declared by this type
-                    WriteMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                // Write non public instance methods declared by this type
+                WriteMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                 UnIndent();
             }
 
+            }
             UnIndent();
             WriteLine("</body>");
 

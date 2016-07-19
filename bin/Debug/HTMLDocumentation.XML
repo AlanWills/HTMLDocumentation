@@ -15,6 +15,22 @@
             The directory info for the directory we are linking
             </summary>
         </member>
+        <member name="P:HTMLDocumentation.HTMLDirectoryLinkerWriter.RelativePathFromCodeRoot">
+            <summary>
+            The relative path of our directory from the root of the code folder
+            </summary>
+        </member>
+        <member name="M:HTMLDocumentation.HTMLDirectoryLinkerWriter.#ctor">
+            <summary>
+            Constructor used for the root directory
+            </summary>
+        </member>
+        <member name="M:HTMLDocumentation.HTMLDirectoryLinkerWriter.#ctor(System.String)">
+            <summary>
+            Constructor used for a sub directory
+            </summary>
+            <param name="relativePathFromCodeRoot"></param>
+        </member>
         <member name="M:HTMLDocumentation.HTMLDirectoryLinkerWriter.WriteDirectory">
             <summary>
             Creates an HTML page with links to any page for a class or link page for a directory in this level.
@@ -62,9 +78,14 @@
             Utility wrapper around a standard stream writer for providing useful functionality when writing HTML
             </summary>
         </member>
-        <member name="P:HTMLDocumentation.HTMLWriter.DocsDirectory">
+        <member name="P:HTMLDocumentation.HTMLWriter.DocsDirectoryInfo">
             <summary>
             The root directory for the directory tree our documentation will be created in.
+            </summary>
+        </member>
+        <member name="P:HTMLDocumentation.HTMLWriter.CodeDirectoryInfo">
+            <summary>
+            The root directory for the directory tree of the .cs files in the assembly
             </summary>
         </member>
         <member name="M:HTMLDocumentation.HTMLWriter.WriteLine(System.String)">

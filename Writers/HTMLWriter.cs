@@ -14,7 +14,12 @@ namespace HTMLDocumentation
         /// <summary>
         /// The root directory for the directory tree our documentation will be created in.
         /// </summary>
-        public static string DocsDirectory { get; set; }
+        public static DirectoryInfo DocsDirectoryInfo { get; set; }
+
+        /// <summary>
+        /// The root directory for the directory tree of the .cs files in the assembly
+        /// </summary>
+        public static DirectoryInfo CodeDirectoryInfo { get; set; }
 
         #endregion
 

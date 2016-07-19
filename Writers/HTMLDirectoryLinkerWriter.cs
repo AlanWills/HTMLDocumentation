@@ -15,12 +15,30 @@ namespace HTMLDocumentation
         /// </summary>
         private DirectoryInfo DirectoryInfo { get; set; }
 
+        /// <summary>
+        /// The relative path of our directory from the root of the code folder
+        /// </summary>
+        private string RelativePathFromCodeRoot { get; set; }
+
         #endregion
 
-        public HTMLDirectoryLinkerWriter(DirectoryInfo directoryInfo) :
-            base(Path.Combine(DocsDirectory, directoryInfo.Name + "Linker.html"))
+        /// <summary>
+        /// Constructor used for the root directory
+        /// </summary>
+        public HTMLDirectoryLinkerWriter() :
+            base(Path.Combine(DocsDirectoryInfo.FullName, DocsDirectoryInfo.Name + " Linker.html"))
         {
-            DirectoryInfo = directoryInfo;
+            DirectoryInfo = CodeDirectoryInfo;
+        }
+
+        /// <summary>
+        /// Constructor used for a sub directory
+        /// </summary>
+        /// <param name="relativePathFromCodeRoot"></param>
+        public HTMLDirectoryLinkerWriter(string relativePathFromCodeRoot) :
+            base(Path.Combine(DocsDirectoryInfo.FullName, relativePathFromCodeRoot + "Linker.html"))
+        {
+            DirectoryInfo = new DirectoryInfo(Path.Combine(CodeDirectoryInfo.FullName, relativePathFromCodeRoot));
         }
 
         /// <summary>
@@ -34,7 +52,7 @@ namespace HTMLDocumentation
 
             WriteLine("<head>");
             Indent();
-            WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectory + "\\Styles\\class.css\">");
+            WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectoryInfo.FullName + "\\Styles\\class.css\">");
             WriteLine("<title>" + DirectoryInfo.Name + "</title>");
             UnIndent();
             WriteLine("</head>");
@@ -45,25 +63,24 @@ namespace HTMLDocumentation
             WriteLine("<h1 id=\"page_title\">" + DirectoryInfo.Name + " Directory</h1>");
             WriteLine("</header>");
 
-            // THESE LINKS ARE WRONG - THEY ARE POINTING TO THE .CS DIRECTORY STRUCTURE WHEN REALLY THEY SHOULD BE POINTING TO THE DOCUMENTATION STRUCTURE
-
             foreach (FileInfo file in DirectoryInfo.GetFiles("*.cs", SearchOption.TopDirectoryOnly))
             {
-                // Write the links to the .html files
-                WriteLine("<a href=\"" + file.FullName + ".html\"/>");
+                // Write the links to the .html files - can use a relative path since it is in the same folder
+                string fileNameWithoutExtension = file.Name.Replace(file.Extension, "");
+                WriteLine("<a href=\"" + fileNameWithoutExtension + ".html\">" + file.Name + "</a>");
             }
 
-            foreach (DirectoryInfo directory in DirectoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))
-            {
-                // Write the links to the directory .html files
-                WriteLine("<a href=\"" + Path.Combine(directory.FullName, directory.Name + "Linker.html") + "\"/>");
+            //foreach (DirectoryInfo directory in DirectoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))
+            //{
+            //    // Write the links to the directory .html files - can use relative paths since it is in a sub folder
+            //    WriteLine("<a href=\"" + Path.Combine(directory.Name, directory.Name + "Linker.html") + "\"/>");
 
-                // Create linker pages for any sub directories on this level
-                using (HTMLDirectoryLinkerWriter directoryLinker = new HTMLDirectoryLinkerWriter(directory))
-                {
-                    directoryLinker.WriteDirectory();
-                }
-            }
+            //    // Create linker pages for any sub directories on this level
+            //    using (HTMLDirectoryLinkerWriter directoryLinker = new HTMLDirectoryLinkerWriter(Path.Combine(RelativePathFromCodeRoot, directory.Name)))
+            //    {
+            //        directoryLinker.WriteDirectory();
+            //    }
+            //}
 
             WriteLine("</body>");
 

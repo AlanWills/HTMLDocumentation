@@ -29,19 +29,25 @@ namespace HTMLDocumentation
         private static void DocumentAssembly(string projectPath)
         {
             // The full path to the dll
-            DirectoryInfo info = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\..\\..");
-            string dllPath = Path.Combine(info.FullName, projectPath);
+            DirectoryInfo codeRootDirectoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\..\\..");
+            string dllPath = Path.Combine(codeRootDirectoryInfo.FullName, projectPath);
             Assembly assembly = Assembly.Load("HTMLDocumentation");
             //Assembly assembly = Assembly.LoadFile(dllPath);
 
             // The full path to the root directory of the code - we will use this to mirror the directory tree on our webpage
-            string codeRootDirectory = info.FullName;
+            string codeRootDirectory = codeRootDirectoryInfo.FullName;
+            HTMLWriter.CodeDirectoryInfo = codeRootDirectoryInfo;
 
             // The directory where we will create the docs
-            string docsDirectory = Path.Combine(dllPath, assembly.GetName().Name + " (Generated)");
-            Directory.Delete(docsDirectory, true);  // Deletes the existing documentation folder so we create a fresh one
-            Directory.CreateDirectory(docsDirectory);
-            HTMLWriter.DocsDirectory = docsDirectory;
+            string docsDirectory = Path.Combine(dllPath, assembly.GetName().Name);
+
+            if (Directory.Exists(docsDirectory))
+            {
+                // Deletes the existing documentation folder so we create a fresh one
+                Directory.Delete(docsDirectory, true);
+            }
+
+            HTMLWriter.DocsDirectoryInfo = Directory.CreateDirectory(docsDirectory);
 
             // Create a directory in the docs directory for the Style sheets
             string stylesDirectory = Path.Combine(docsDirectory, "Styles");
@@ -77,7 +83,12 @@ namespace HTMLDocumentation
                 {
                     // We want to extract the relative path from the code root directory and create that relative structure inside the docs directory
                     string dirName = directory.FullName.Replace(codeRootDirectory, "");
-                    Directory.CreateDirectory(docsDirectory + dirName);
+
+                    if (!Directory.Exists(docsDirectory + dirName))
+                    {
+                        // Create the directory if it does not already exist
+                        Directory.CreateDirectory(docsDirectory + dirName);
+                    }
 
                     // Move the html file from the flat documentation directory to the new folder mirroring the code directory structure
                     string oldFileHTMLPath = Path.Combine(docsDirectory, file.Name.Replace(file.Extension, "") + ".html");
@@ -92,13 +103,13 @@ namespace HTMLDocumentation
 
             // Now that all of the files have been moved to the correct created directories, we can create linking pages for each directory
             // Do this by calling a recursive function on each directory starting with our top level
-            using (HTMLDirectoryLinkerWriter writer = new HTMLDirectoryLinkerWriter(new DirectoryInfo(codeRootDirectory)))
+            using (HTMLDirectoryLinkerWriter writer = new HTMLDirectoryLinkerWriter())
             {
                 writer.WriteDirectory();
             }
 
             // Launch the docs in Chrome
-            string lastName = Path.Combine(docsDirectory, "Writer", "HTMLWriter.html");
+            string lastName = Path.Combine(docsDirectory, "Writers", "HTMLWriter.html");
             lastName = lastName.Replace(" ", "%20");
             Process chrome = Process.Start(@"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe", lastName);
 
