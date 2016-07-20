@@ -15,3 +15,6 @@ C:\Users\Alan Wills\Documents\Visual Studio 2012\Projects\HTMLDocumentation\bin\
 C:\Users\Alan Wills\Documents\Visual Studio 2012\Projects\HTMLDocumentation\bin\Debug\HTMLDocumentation.XML
 C:\Users\Alan Wills\Documents\Visual Studio 2012\Projects\HTMLDocumentation\obj\Debug\HTMLDocumentation.exe
 C:\Users\Alan Wills\Documents\Visual Studio 2012\Projects\HTMLDocumentation\obj\Debug\HTMLDocumentation.pdb
+C:\Users\Alan Wills\Documents\Visual Studio 2012\Projects\HTMLDocumentation\bin\Debug\HTMLDocumentation.exe
+C:\Users\Alan Wills\Documents\Visual Studio 2012\Projects\HTMLDocumentation\bin\Debug\HTMLDocumentation.pdb
+C:\Users\Alan Wills\Documents\Visual Studio 2012\Projects\HTMLDocumentation\obj\Debug\HTMLDocumentation.csprojResolveAssemblyReference.cache

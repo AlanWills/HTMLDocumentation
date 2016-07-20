@@ -53,7 +53,8 @@ namespace HTMLDocumentation
 
                 // Write a link to the files above and below this type's file if they exist
                 List<FileInfo> filesInDir = info[0].Directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
-                int index = filesInDir.IndexOf(info[0]);
+                int index = filesInDir.FindIndex(x => x.Name == info[0].Name);
+                Debug.Assert(index > -1);
 
                 // Write the previous file if it exists
                 if (index > 0)
