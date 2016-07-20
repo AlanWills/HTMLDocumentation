@@ -17,12 +17,15 @@ namespace HTMLDocumentation
 
         private Type Type { get; set; }
 
+        private FileInfo FileInfoForType { get; set; }
+
         #endregion
 
-        public HTMLTypeWriter(Type type) :
-            base(Path.Combine(DocsDirectoryInfo.FullName, type.Name + ".html"))
+        public HTMLTypeWriter(Type type, FileInfo fileInfoForType) :
+            base(Path.Combine(fileInfoForType.FullName.Replace(CodeDirectoryInfo.FullName, DocsDirectoryInfo.FullName), type.Name + ".html"))
         {
             Type = type;
+            FileInfoForType = fileInfoForType;
         }
 
         public void WriteType()
