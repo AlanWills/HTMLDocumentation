@@ -66,8 +66,7 @@ namespace HTMLDocumentation
             foreach (FileInfo file in DirectoryInfo.GetFiles("*.cs", SearchOption.TopDirectoryOnly))
             {
                 // Write the links to the .html files - can use a relative path since it is in the same folder
-                string fileNameWithoutExtension = file.Name.Replace(file.Extension, "");
-                WriteLine("<a href=\"" + fileNameWithoutExtension + ".html\">" + file.Name + "</a>");
+                WriteLine("<a href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.Name + "</a>");
             }
 
             //foreach (DirectoryInfo directory in DirectoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))

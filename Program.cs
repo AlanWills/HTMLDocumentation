@@ -72,9 +72,13 @@ namespace HTMLDocumentation
             // Look through the directories in the first level of our code structure
             foreach (DirectoryInfo directory in assemblyDirectory.GetDirectories("*", SearchOption.TopDirectoryOnly))
             {
-                if (directory.Name == "obj" || directory.Name == "bin" || directory.Name == "Properties")
+                if (directory.Name == "obj" || 
+                    directory.Name == "bin" || 
+                    directory.Name == "Properties" ||
+                    (directory.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
                 {
                     // Skip bin and obj - work out how to do this via regex in GetDirectories
+                    // Skip hidden directories
                     continue;
                 }
 

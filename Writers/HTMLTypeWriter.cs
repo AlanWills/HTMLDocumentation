@@ -52,6 +52,7 @@ namespace HTMLDocumentation
                 WriteLine("<a href=\"" + info[0].Directory.Name + " Linker.html\">" + info[0].Directory.Name + "</a>");
 
                 // Write a link to the files above and below this type's file if they exist
+                // DON'T WRITE LINKER FILES
                 List<FileInfo> filesInDir = info[0].Directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
                 int index = filesInDir.FindIndex(x => x.Name == info[0].Name);
                 Debug.Assert(index > -1);
@@ -59,13 +60,13 @@ namespace HTMLDocumentation
                 // Write the previous file if it exists
                 if (index > 0)
                 {
-                    WriteLine("<a href=\"" + filesInDir[index - 1].Name + ".html\">" + filesInDir[index - 1].Name + "</a>");
+                    WriteLine("<a href=\"" + filesInDir[index - 1].GetExtensionlessFileName() + ".html\">" + filesInDir[index - 1].Name + "</a>");
                 }
 
                 // Write the next file if it exists
                 if (index < filesInDir.Count - 1)
                 {
-                    WriteLine("<a href=\"" + filesInDir[filesInDir.Count - 1].Name + ".html\">" + filesInDir[filesInDir.Count - 1].Name + "</a>");
+                    WriteLine("<a href=\"" + filesInDir[filesInDir.Count - 1].GetExtensionlessFileName() + ".html\">" + filesInDir[filesInDir.Count - 1].Name + "</a>");
                 }
 
                 //foreach (FieldInfo property in type.GetFields())
