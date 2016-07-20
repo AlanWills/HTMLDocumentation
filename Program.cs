@@ -93,6 +93,9 @@ namespace HTMLDocumentation
                 }
             }
 
+
+            // REWRITE THIS - THINK WE CAN PASS IN THE FULL PATH TO THE DOCS DIRECTORY ONLY NOW THAT ALL THE HTML FILES ARE THERE
+            // DON'T NEED THE CS DIRECTORY
             foreach (DirectoryInfo directoryInfo in docsDirectoryInfo.GetDirectories("*", SearchOption.AllDirectories))
             {
                 using (HTMLDirectoryLinkerWriter writer = new HTMLDirectoryLinkerWriter())

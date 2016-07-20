@@ -69,17 +69,11 @@ namespace HTMLDocumentation
                 WriteLine("<a href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.Name + "</a>");
             }
 
-            //foreach (DirectoryInfo directory in DirectoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))
-            //{
-            //    // Write the links to the directory .html files - can use relative paths since it is in a sub folder
-            //    WriteLine("<a href=\"" + Path.Combine(directory.Name, directory.Name + "Linker.html") + "\"/>");
-
-            //    // Create linker pages for any sub directories on this level
-            //    using (HTMLDirectoryLinkerWriter directoryLinker = new HTMLDirectoryLinkerWriter(Path.Combine(RelativePathFromCodeRoot, directory.Name)))
-            //    {
-            //        directoryLinker.WriteDirectory();
-            //    }
-            //}
+            foreach (DirectoryInfo directory in DirectoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))
+            {
+                // Write the links to the directory .html files - can use relative paths since it is in a sub folder
+                WriteLine("<a href=\"" + Path.Combine(directory.Name, directory.Name + " Linker.html") + "\">" + directory.Name + " Directory" + "</a>");
+            }
 
             WriteLine("</body>");
 
