@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml.XPath;
 
@@ -48,6 +50,22 @@ namespace HTMLDocumentation
                 FileInfo[] info = CodeDirectoryInfo.GetFiles(Type.Name + ".cs", SearchOption.AllDirectories);
                 Debug.Assert(info.Length == 1);
                 WriteLine("<a href=\"" + info[0].Directory.Name + " Linker.html\">" + info[0].Directory.Name + "</a>");
+
+                // Write a link to the files above and below this type's file if they exist
+                List<FileInfo> filesInDir = info[0].Directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
+                int index = filesInDir.IndexOf(info[0]);
+
+                // Write the previous file if it exists
+                if (index > 0)
+                {
+                    WriteLine("<a href=\"" + filesInDir[index - 1].Name + ".html\">" + filesInDir[index - 1].Name + "</a>");
+                }
+
+                // Write the next file if it exists
+                if (index < filesInDir.Count - 1)
+                {
+                    WriteLine("<a href=\"" + filesInDir[filesInDir.Count - 1].Name + ".html\">" + filesInDir[filesInDir.Count - 1].Name + "</a>");
+                }
 
                 //foreach (FieldInfo property in type.GetFields())
                 //{
