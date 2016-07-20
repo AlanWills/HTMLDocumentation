@@ -98,6 +98,15 @@ namespace HTMLDocumentation
             // DON'T NEED THE CS DIRECTORY
             foreach (DirectoryInfo directoryInfo in docsDirectoryInfo.GetDirectories("*", SearchOption.AllDirectories))
             {
+                // Don't write certain pre-known directories or hidden directories.
+                if (directoryInfo.Name == "bin" ||
+                    directoryInfo.Name == "obj" ||
+                    directoryInfo.Name == "Properties" ||
+                    (directoryInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                {
+                    continue;
+                }
+
                 using (HTMLDirectoryLinkerWriter writer = new HTMLDirectoryLinkerWriter())
                 {
                     writer.WriteDirectory();
