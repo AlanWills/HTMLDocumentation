@@ -19,8 +19,8 @@ namespace HTMLDocumentation
 
         #endregion
 
-        public HTMLTypeWriter(Type type, string filePath) :
-            base(filePath)
+        public HTMLTypeWriter(Type type, string documentationFilePath) :
+            base(documentationFilePath)
         {
             Type = type;
         }
@@ -50,9 +50,11 @@ namespace HTMLDocumentation
                 FileInfo[] info = CodeDirectoryInfo.GetFiles(Type.Name + ".cs", SearchOption.AllDirectories);
                 Debug.Assert(info.Length == 1);
                 WriteLine("<a href=\"" + info[0].Directory.Name + HTMLDirectoryLinkerWriter.LinkerString + "\">" + info[0].Directory.Name + "</a>");
+                WriteLine("<br/>");
 
                 // Write a link to the files above and below this type's file if they exist
-                // DON'T WRITE LINKER FILES
+                // We cannot use the actual html files for this as they may not have been created yet
+                // This also means that we will not write linker files by mistake
                 List<FileInfo> filesInDir = info[0].Directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
                 int index = filesInDir.FindIndex(x => x.Name == info[0].Name);
                 Debug.Assert(index > -1);
@@ -61,12 +63,14 @@ namespace HTMLDocumentation
                 if (index > 0)
                 {
                     WriteLine("<a href=\"" + filesInDir[index - 1].GetExtensionlessFileName() + ".html\">" + filesInDir[index - 1].GetExtensionlessFileName() + "</a>");
+                    WriteLine("<br/>");
                 }
 
                 // Write the next file if it exists
                 if (index < filesInDir.Count - 1)
                 {
-                    WriteLine("<a href=\"" + filesInDir[filesInDir.Count - 1].GetExtensionlessFileName() + ".html\">" + filesInDir[filesInDir.Count - 1].GetExtensionlessFileName() + "</a>");
+                    WriteLine("<a href=\"" + filesInDir[index + 1].GetExtensionlessFileName() + ".html\">" + filesInDir[index + 1].GetExtensionlessFileName() + "</a>");
+                    WriteLine("<br/>");
                 }
 
                 //foreach (FieldInfo property in type.GetFields())
@@ -79,10 +83,8 @@ namespace HTMLDocumentation
 
                 /*
                  * Have headers + bookmarks for each section (Instance and static, then subsections of public & non-public)
-                 * Going to need to write instance & static of public and non public methods declared in this class.
-                 * Also indicate if they are overriding virtual functions (if they are only)
                  * Don't write property setters and getters - do that in properties - remove the setters and getters when we iterate over properties?
-                 * Parameters, return types, template arguments etc.
+                 * Template arguments etc.
                  * Document properties, fields, events
                  */
 

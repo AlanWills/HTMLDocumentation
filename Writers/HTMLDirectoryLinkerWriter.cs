@@ -56,6 +56,7 @@ namespace HTMLDocumentation
 
                 // Write the links to the .html files - can use a relative path since it is in the same folder
                 WriteLine("<a href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.GetExtensionlessFileName() + "</a>");
+                WriteLine("<br/>");
             }
 
             foreach (DirectoryInfo directory in DirectoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))
@@ -68,6 +69,7 @@ namespace HTMLDocumentation
 
                 // Write the links to the directory linker .html files - can use relative paths since it is in a sub folder
                 WriteLine("<a href=\"" + Path.Combine(directory.Name, directory.Name + LinkerString) + "\">" + directory.Name + " Directory" + "</a>");
+                WriteLine("<br/>");
             }
 
             WriteLine("</body>");
