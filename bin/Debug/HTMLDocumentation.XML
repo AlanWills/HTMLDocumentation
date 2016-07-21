@@ -4,6 +4,13 @@
         <name>HTMLDocumentation</name>
     </assembly>
     <members>
+        <member name="M:HTMLDocumentation.Extensions.ShouldIgnoreDirectory(System.IO.DirectoryInfo)">
+            <summary>
+            Returns true if this directory is one of: bin, obj, Properties, is hidden or has no .html files inside it
+            </summary>
+            <param name="directoryInfo"></param>
+            <returns></returns>
+        </member>
         <member name="T:HTMLDocumentation.HTMLDirectoryLinkerWriter">
             <summary>
             An HTMLWriter which creates a page linking all files and directories in IT'S level only.

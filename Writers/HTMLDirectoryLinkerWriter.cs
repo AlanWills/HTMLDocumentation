@@ -49,13 +49,25 @@ namespace HTMLDocumentation
 
             foreach (FileInfo file in DirectoryInfo.GetFiles("*.html", SearchOption.TopDirectoryOnly))
             {
+                // Don't write the linker file
+                if (file.Name == DirectoryInfo.Name + LinkerString)
+                {
+                    continue;
+                }
+
                 // Write the links to the .html files - can use a relative path since it is in the same folder
                 WriteLine("<a href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.Name + "</a>");
             }
 
             foreach (DirectoryInfo directory in DirectoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))
             {
-                // Write the links to the directory .html files - can use relative paths since it is in a sub folder
+                // Don't write links to invalid directories
+                if (directory.ShouldIgnoreDirectory())
+                {
+                    continue;
+                }
+
+                // Write the links to the directory linker .html files - can use relative paths since it is in a sub folder
                 WriteLine("<a href=\"" + Path.Combine(directory.Name, directory.Name + LinkerString) + "\">" + directory.Name + " Directory" + "</a>");
             }
 

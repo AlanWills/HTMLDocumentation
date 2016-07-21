@@ -102,11 +102,8 @@ namespace HTMLDocumentation
             // Write linkers for all sub directories
             foreach (DirectoryInfo directoryInfo in docsDirectoryInfo.GetDirectories("*", SearchOption.AllDirectories))
             {
-                // Don't write certain pre-known directories or hidden directories.
-                if (directoryInfo.Name == "bin" ||
-                    directoryInfo.Name == "obj" ||
-                    directoryInfo.Name == "Properties" ||
-                    (directoryInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                // Don't write certain pre-known directories, hidden directories or directories with no pages in
+                if (directoryInfo.ShouldIgnoreDirectory())
                 {
                     continue;
                 }
