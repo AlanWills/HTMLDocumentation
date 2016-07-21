@@ -26,8 +26,7 @@ namespace HTMLDocumentation
         }
 
         /// <summary>
-        /// Creates an HTML page with links to any page for a class or link page for a directory in this level.
-        /// Recursively calls to sub directories too.
+        /// Creates an HTML page with links to the pages for classes and directories on this level.
         /// </summary>
         public void WriteDirectory()
         {
@@ -56,7 +55,7 @@ namespace HTMLDocumentation
                 }
 
                 // Write the links to the .html files - can use a relative path since it is in the same folder
-                WriteLine("<a href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.Name + "</a>");
+                WriteLine("<a href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.GetExtensionlessFileName() + "</a>");
             }
 
             foreach (DirectoryInfo directory in DirectoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))
