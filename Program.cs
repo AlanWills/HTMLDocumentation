@@ -93,9 +93,13 @@ namespace HTMLDocumentation
                 }
             }
 
+            // Writer root directory linker
+            using (HTMLDirectoryLinkerWriter writer = new HTMLDirectoryLinkerWriter(docsDirectoryInfo))
+            {
+                writer.WriteDirectory();
+            }
 
-            // REWRITE THIS - THINK WE CAN PASS IN THE FULL PATH TO THE DOCS DIRECTORY ONLY NOW THAT ALL THE HTML FILES ARE THERE
-            // DON'T NEED THE CS DIRECTORY
+            // Write linkers for all sub directories
             foreach (DirectoryInfo directoryInfo in docsDirectoryInfo.GetDirectories("*", SearchOption.AllDirectories))
             {
                 // Don't write certain pre-known directories or hidden directories.
@@ -107,20 +111,18 @@ namespace HTMLDocumentation
                     continue;
                 }
 
-                using (HTMLDirectoryLinkerWriter writer = new HTMLDirectoryLinkerWriter())
+                using (HTMLDirectoryLinkerWriter writer = new HTMLDirectoryLinkerWriter(directoryInfo))
                 {
                     writer.WriteDirectory();
                 }
             }
             
             // Launch the docs in Chrome
-            string lastName = Path.Combine(docsDirectory, docsDirectoryInfo.Name + " Linker.html");
+            string lastName = Path.Combine(docsDirectory, docsDirectoryInfo.Name + HTMLDirectoryLinkerWriter.LinkerString);
             lastName = lastName.Replace(" ", "%20");
             Process chrome = Process.Start(@"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe", lastName);
 
             // Set the focus to be the Chrome window
-            string processName = chrome.ProcessName;
-            string mainWindowTitle = chrome.MainWindowTitle;
             SetFocus(new HandleRef(null, chrome.MainWindowHandle));
         }
 

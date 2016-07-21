@@ -10,31 +10,36 @@
             Also recursively does the same thing for any directory in it's level.
             </summary>
         </member>
-        <member name="P:HTMLDocumentation.HTMLDirectoryLinkerWriter.DirectoryInfo">
+        <member name="T:HTMLDocumentation.HTMLWriter">
             <summary>
-            The directory info for the directory we are linking
+            Utility wrapper around a standard stream writer for providing useful functionality when writing HTML
             </summary>
         </member>
-        <member name="P:HTMLDocumentation.HTMLDirectoryLinkerWriter.RelativePathFromCodeRoot">
+        <member name="M:HTMLDocumentation.HTMLWriter.WriteLine(System.String)">
             <summary>
-            The relative path of our directory from the root of the code folder
+            Overwrite the writeline function with our own implementation that uses the indentation
+            </summary>
+            <param name="line"></param>
+        </member>
+        <member name="P:HTMLDocumentation.HTMLWriter.DocsDirectoryInfo">
+            <summary>
+            The root directory for the directory tree our documentation will be created in.
             </summary>
         </member>
-        <member name="M:HTMLDocumentation.HTMLDirectoryLinkerWriter.#ctor">
+        <member name="P:HTMLDocumentation.HTMLWriter.CodeDirectoryInfo">
             <summary>
-            Constructor used for the root directory
+            The root directory for the directory tree of the .cs files in the assembly
             </summary>
-        </member>
-        <member name="M:HTMLDocumentation.HTMLDirectoryLinkerWriter.#ctor(System.String)">
-            <summary>
-            Constructor used for a sub directory
-            </summary>
-            <param name="relativePathFromCodeRoot"></param>
         </member>
         <member name="M:HTMLDocumentation.HTMLDirectoryLinkerWriter.WriteDirectory">
             <summary>
             Creates an HTML page with links to any page for a class or link page for a directory in this level.
             Recursively calls to sub directories too.
+            </summary>
+        </member>
+        <member name="P:HTMLDocumentation.HTMLDirectoryLinkerWriter.DirectoryInfo">
+            <summary>
+            The directory info for the directory we are linking
             </summary>
         </member>
         <member name="T:HTMLDocumentation.HTMLTypeWriter">
@@ -72,27 +77,6 @@
             returns the XPathNavigator at that position.
             </summary>
             <param name="method"></param>
-        </member>
-        <member name="T:HTMLDocumentation.HTMLWriter">
-            <summary>
-            Utility wrapper around a standard stream writer for providing useful functionality when writing HTML
-            </summary>
-        </member>
-        <member name="P:HTMLDocumentation.HTMLWriter.DocsDirectoryInfo">
-            <summary>
-            The root directory for the directory tree our documentation will be created in.
-            </summary>
-        </member>
-        <member name="P:HTMLDocumentation.HTMLWriter.CodeDirectoryInfo">
-            <summary>
-            The root directory for the directory tree of the .cs files in the assembly
-            </summary>
-        </member>
-        <member name="M:HTMLDocumentation.HTMLWriter.WriteLine(System.String)">
-            <summary>
-            Overwrite the writeline function with our own implementation that uses the indentation
-            </summary>
-            <param name="line"></param>
         </member>
     </members>
 </doc>

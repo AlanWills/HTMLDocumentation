@@ -49,7 +49,7 @@ namespace HTMLDocumentation
                 // Write a link back to the linker for the directory this type's .cs file is in
                 FileInfo[] info = CodeDirectoryInfo.GetFiles(Type.Name + ".cs", SearchOption.AllDirectories);
                 Debug.Assert(info.Length == 1);
-                WriteLine("<a href=\"" + info[0].Directory.Name + " Linker.html\">" + info[0].Directory.Name + "</a>");
+                WriteLine("<a href=\"" + info[0].Directory.Name + HTMLDirectoryLinkerWriter.LinkerString + "\">" + info[0].Directory.Name + "</a>");
 
                 // Write a link to the files above and below this type's file if they exist
                 // DON'T WRITE LINKER FILES
