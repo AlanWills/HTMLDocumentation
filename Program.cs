@@ -37,7 +37,6 @@ namespace HTMLDocumentation
             //Assembly assembly = Assembly.LoadFile(dllPath);
 
             // The full path to the root directory of the code - we will use this to mirror the directory tree on our webpage
-            string codeRootDirectory = codeDirectoryInfo.FullName;
             HTMLWriter.CodeDirectoryInfo = codeDirectoryInfo;
 
             // The directory where we will create the docs
@@ -58,6 +57,13 @@ namespace HTMLDocumentation
 
             // Copy the style sheets into the documentation directory and override any existing ones
             File.Copy(Path.Combine(dllPath, "class.css"), Path.Combine(stylesDirectory, "class.css"), true);
+
+            // Create a directory in the docs directory for the scripts
+            string scriptsDirectory = Path.Combine(docsDirectory, "Scripts");
+            Directory.CreateDirectory(scriptsDirectory);
+
+            // Copy the style sheets into the documentation directory and override any existing ones
+            File.Copy(Path.Combine(dllPath, "accordion_script.js"), Path.Combine(scriptsDirectory, "accordion_script.js"), true);
 
             /*
              * ALGORITHM:

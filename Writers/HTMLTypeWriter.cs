@@ -33,7 +33,10 @@ namespace HTMLDocumentation
             WriteLine("<head>");
             Indent();
             {
-                WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectoryInfo.FullName + "\\Styles\\class.css\">");
+                // TODO
+                // Path.Combine these
+                WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectoryInfo.FullName + "\\Styles\\class.css\"></link>");
+                WriteLine("<script src=\"" + DocsDirectoryInfo.FullName + "\\Scripts\\accordion_script.js\"></script>");
                 WriteLine("<title>" + Type.Name + "</title>");
             }
             UnIndent();
@@ -171,15 +174,18 @@ namespace HTMLDocumentation
 
             // Construct the html for the return type
             string returnTypeString = "<span title=\"Return type\" class=\"return_type\">" + method.ReturnParameter.ParameterType.Name + "</span>";
+            //  + returnTypeString + " <span title=\"Method name\">"
 
             // Construct the html for the method name
-            string methodString = "<h4>" + returnTypeString + " <span title=\"Method name\">" + method.Name + "</span>" + parametersString;
-            if (method.IsVirtual)
-            {
-                methodString += " <span class=\"virtual\" title=\"Method is virtual or overrides a virtual function\">(Virtual)</span>";
-            }
+            string methodString = "<button class=\"accordion\" onclick=\"expand()\">" + method.Name + "</button>";
+            //if (method.IsVirtual)
+            //{
+            //    methodString += " <span class=\"virtual\" title=\"Method is virtual or overrides a virtual function\">(Virtual)</span>";
+            //}
 
-            WriteLine(methodString + "</h4>");
+            WriteLine(methodString);
+            WriteLine("<div class=\"panel\">");
+            Indent();
 
             XPathNavigator methodNode = GetXMLDocNodeForMethod(method);
             if (methodNode != null)
@@ -213,6 +219,9 @@ namespace HTMLDocumentation
                     }
                 }
             }
+
+            UnIndent();
+            WriteLine("</div>");
         }
 
         /// <summary>
