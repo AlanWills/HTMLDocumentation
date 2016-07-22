@@ -33,10 +33,8 @@ namespace HTMLDocumentation
             WriteLine("<head>");
             Indent();
             {
-                // TODO
-                // Path.Combine these
+                // TODO Path.Combine these
                 WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectoryInfo.FullName + "\\Styles\\class.css\"></link>");
-                WriteLine("<script src=\"" + DocsDirectoryInfo.FullName + "\\Scripts\\accordion_script.js\"></script>");
                 WriteLine("<title>" + Type.Name + "</title>");
             }
             UnIndent();
@@ -110,6 +108,9 @@ namespace HTMLDocumentation
 
             }
             UnIndent();
+
+            // TODO Path.Combine these
+            WriteLine("<script src=\"" + DocsDirectoryInfo.FullName + "\\Scripts\\accordion_script.js\"></script>");
             WriteLine("</body>");
 
             WriteLine("</html>");

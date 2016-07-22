@@ -29,6 +29,56 @@ namespace HTMLDocumentation
 
         }
 
+        #region Virtual Functions
+
+        /// <summary>
+        /// WRites the whole html file by calling through to the virtual functions WriteHead, WriteBody etc.
+        /// </summary>
+        public virtual void Write()
+        {
+            
+        }
+
+        /// <summary>
+        /// Override this function to specify extra content for the documents header.
+        /// No need to include <head></head> tags.
+        /// </summary>
+        protected virtual void WriterHead()
+        {
+            
+        }
+
+        /// <summary>
+        /// Override this function to specify extra content for the documents body.
+        /// No need to include <body></body> tags.
+        /// </summary>
+        protected virtual void WriteBody()
+        {
+            
+        }
+
+        /// <summary>
+        /// Called in the head section of the document.
+        /// Override to implement the running of javascript before the rest of the document is loaded.
+        /// </summary>
+        protected virtual void WritePreScripts()
+        {
+            
+        }
+
+        /// <summary>
+        /// Called right at the end of the html document.
+        /// Override to implement the running of javascript before the rest of the document is loaded.
+        /// </summary>
+        protected virtual void WritePostScripts()
+        {
+            
+        }
+
+        #endregion
+
+        #region Utility Functions
+
         /// <summary>
         /// Overwrite the writeline function with our own implementation that uses the indentation
         /// </summary>
@@ -47,5 +97,7 @@ namespace HTMLDocumentation
         {
             Indentation = Indentation.Remove(Indentation.Length - 1);
         }
+
+        #endregion
     }
 }
