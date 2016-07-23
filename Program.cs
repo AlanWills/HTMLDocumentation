@@ -44,9 +44,15 @@ namespace HTMLDocumentation
 
             if (Directory.Exists(docsDirectory))
             {
+                // Log our deletion of the existing directory
+                Console.WriteLine("Existing documentation folder found.  Deleting and rebuilding");
+
                 // Deletes the existing documentation folder so we create a fresh one
                 Directory.Delete(docsDirectory, true);
             }
+
+            // Log the creation of the new documentation directory
+            Console.WriteLine("Creating documentation directory: '" + assembly.GetName().Name + "'");
 
             DirectoryInfo docsDirectoryInfo = Directory.CreateDirectory(docsDirectory);
             HTMLWriter.DocsDirectoryInfo = docsDirectoryInfo;
