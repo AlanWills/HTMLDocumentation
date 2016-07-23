@@ -58,7 +58,6 @@ namespace HTMLDocumentation
         {
             base.WriteHead();
 
-            WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectoryInfo.FullName + "\\Styles\\class.css\">");
             WriteLine("<title>" + DirectoryInfo.Name + "</title>");
         }
 

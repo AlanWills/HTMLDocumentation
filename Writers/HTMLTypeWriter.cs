@@ -51,8 +51,6 @@ namespace HTMLDocumentation
         {
             base.WriteHead();
 
-            // TODO Path.Combine these
-            WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectoryInfo.FullName + "\\Styles\\class.css\"></link>");
             WriteLine("<title>" + Type.Name + "</title>");
         }
 
@@ -127,17 +125,6 @@ namespace HTMLDocumentation
             }
         }
 
-        /// <summary>
-        /// Add the script which will set up the expanding of the accordion.
-        /// </summary>
-        protected override void WritePostScripts()
-        {
-            base.WritePostScripts();
-
-            // TODO Path.Combine these
-            WriteLine("<script src=\"" + Path.Combine(DocsDirectoryInfo.FullName, "Scripts\\accordion_script.js") + "\"></script>");
-        }
-
         #endregion
 
         #region Utility Functions
@@ -199,19 +186,38 @@ namespace HTMLDocumentation
             }
             parametersString += ")";
 
+            //          < div class="w3-accordion w3-light-grey">
+            //            <button onclick="expand('Demo1')" class="w3-btn-block w3-left-align">
+            //              Accordion
+            //            </button>
+            //            <div id = "Demo1" class="w3-accordion-content">
+            //              <a href = "#" > Link 1</a>
+            //              <a href = "#" > Link 2</a>
+            //              <a href = "#" > Link 3</a>
+            //            </div>
+            //          </div>
+
+            WriteLine("<div class=\"w3-card-4\" style=\"width: 25%\">");
+            Indent();
+
             // Construct the html for the return type
-            string returnTypeString = "<span title=\"Return type\" class=\"return_type\">" + method.ReturnParameter.ParameterType.Name + "</span> ";
+            //string returnTypeString = "<span title=\"Return type\" class=\"return_type\">" + method.ReturnParameter.ParameterType.Name + "</span> ";
 
-            // Construct the html for the method name
-            string methodString = "<button type=\"button\" class=\"accordion\">" + returnTypeString + method.Name;
-            if (method.IsVirtual)
-            {
-                methodString += " <span class=\"virtual\" title=\"Method is virtual or overrides a virtual function\">(Virtual)</span>";
-            }
-            methodString += "</button>";
+            //// Construct the html for the method name
+            //string methodString = "<button type=\"button\" class=\"w3-btn-block w3-left-align\" onclick=\"expand('" + method.Name + "')\">" + returnTypeString + method.Name;
+            //if (method.IsVirtual)
+            //{
+            //    methodString += " <span class=\"virtual\" title=\"Method is virtual or overrides a virtual function\">(Virtual)</span>";
+            //}
+            //methodString += "</button>";
 
-            WriteLine(methodString);
-            WriteLine("<div class=\"panel\">");
+            WriteLine("<header class=\"w3-container w3-blue w3-hover-shadow\"");
+            Indent();
+                WriteLine("<h1>" + method.Name + "</h1>");
+            UnIndent();
+            WriteLine("</header>");
+
+            WriteLine("<div class=\"w3-container\">");
             Indent();
 
             XPathNavigator methodNode = GetXMLDocNodeForMethod(method);
@@ -223,7 +229,7 @@ namespace HTMLDocumentation
                     clone = methodNode.Clone();
                     clone.MoveToChild("summary", "");
 
-                    WriteLine("<p>" + clone.InnerXml + "</p>");
+                    WriteLine("<p>" + clone.InnerXml.Trim(' ', '\r', '\n') + "</p>");
                 }
 
                 // Construct the html for the comments on the parameters
@@ -246,6 +252,9 @@ namespace HTMLDocumentation
                     }
                 }
             }
+
+            UnIndent();
+            WriteLine("</div>");
 
             UnIndent();
             WriteLine("</div>");

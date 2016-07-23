@@ -57,12 +57,8 @@ namespace HTMLDocumentation
             DirectoryInfo docsDirectoryInfo = Directory.CreateDirectory(docsDirectory);
             HTMLWriter.DocsDirectoryInfo = docsDirectoryInfo;
 
-            // Create a directory in the docs directory for the Style sheets
-            string stylesDirectory = Path.Combine(docsDirectory, "Styles");
-            Directory.CreateDirectory(stylesDirectory);
-
-            // Copy the style sheets into the documentation directory and override any existing ones
-            File.Copy(Path.Combine(dllPath, "class.css"), Path.Combine(stylesDirectory, "class.css"), true);
+            // Log the creation of the scripts directory
+            Console.WriteLine("Creating scripts directory");
 
             // Create a directory in the docs directory for the scripts
             string scriptsDirectory = Path.Combine(docsDirectory, "Scripts");
@@ -101,6 +97,7 @@ namespace HTMLDocumentation
                     using (HTMLTypeWriter writer = new HTMLTypeWriter(type, htmlFileName))
                     {
                         writer.Write();
+                        Console.WriteLine("Wrote " + type.Name + " class page");
                     }
                 }
             }
@@ -109,6 +106,7 @@ namespace HTMLDocumentation
             using (HTMLDirectoryLinkerWriter writer = new HTMLDirectoryLinkerWriter(docsDirectoryInfo))
             {
                 writer.Write();
+                Console.WriteLine("Wrote " + docsDirectoryInfo.Name + " directory page");
             }
 
             // Write linkers for all sub directories
@@ -123,6 +121,7 @@ namespace HTMLDocumentation
                 using (HTMLDirectoryLinkerWriter writer = new HTMLDirectoryLinkerWriter(directoryInfo))
                 {
                     writer.Write();
+                    Console.WriteLine("Wrote " + docsDirectoryInfo.Name + " directory page");
                 }
             }
             

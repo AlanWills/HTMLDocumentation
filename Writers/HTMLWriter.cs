@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace HTMLDocumentation
 {
@@ -49,7 +50,7 @@ namespace HTMLDocumentation
             UnIndent();
             WriteLine("</head>");
 
-            WriteLine("<body>");
+            WriteLine("<body class=\"w3 - container\">");
             Indent();
             {
                 WriteBody();
@@ -70,9 +71,14 @@ namespace HTMLDocumentation
 
         /// <summary>
         /// Override this function to specify extra content for the documents header.
+        /// Base function specifies the style sheet from w3schools as well as basic layout information.
         /// No need to include <head></head> tags.
         /// </summary>
-        protected virtual void WriteHead() { }
+        protected virtual void WriteHead()
+        {
+            WriteLine("<meta name=\"viewport\" content=\"width = device - width, initial - scale = 1\">");
+            WriteLine("<link rel=\"stylesheet\" href=\"http://www.w3schools.com/lib/w3.css\">");
+        }
 
         /// <summary>
         /// Override this function to specify extra content for the documents body.
