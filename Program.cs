@@ -94,7 +94,7 @@ namespace HTMLDocumentation
 
                     using (HTMLTypeWriter writer = new HTMLTypeWriter(type, htmlFileName))
                     {
-                        writer.WriteType();
+                        writer.Write();
                     }
                 }
             }
@@ -102,7 +102,7 @@ namespace HTMLDocumentation
             // Writer root directory linker
             using (HTMLDirectoryLinkerWriter writer = new HTMLDirectoryLinkerWriter(docsDirectoryInfo))
             {
-                writer.WriteDirectory();
+                writer.Write();
             }
 
             // Write linkers for all sub directories
@@ -116,7 +116,7 @@ namespace HTMLDocumentation
 
                 using (HTMLDirectoryLinkerWriter writer = new HTMLDirectoryLinkerWriter(directoryInfo))
                 {
-                    writer.WriteDirectory();
+                    writer.Write();
                 }
             }
             
@@ -128,10 +128,5 @@ namespace HTMLDocumentation
             // Set the focus to be the Chrome window
             SetFocus(new HandleRef(null, chrome.MainWindowHandle));
         }
-
-        // Need assembly info but also file structure
-        // Have a skip attribute
-        // Work on C++ too?
-        // For each directory, add a "link" page as it were to all the directories and files directly in it
     }
 }

@@ -32,48 +32,57 @@ namespace HTMLDocumentation
         #region Virtual Functions
 
         /// <summary>
-        /// WRites the whole html file by calling through to the virtual functions WriteHead, WriteBody etc.
+        /// Writes the whole html file by calling through to the virtual functions WriteHead, WriteBody etc.
         /// </summary>
-        public virtual void Write()
+        public void Write()
         {
-            
+            WriteLine("<!DOCTYPE html/>");
+            WriteLine("<html>");
+
+            WriteLine("<head>");
+            Indent();
+            {
+                WriteHead();
+            }
+            UnIndent();
+            WriteLine("</head>");
+
+            WriteLine("<body>");
+            Indent();
+            {
+                WriteBody();
+            }
+            UnIndent();
+
+            WritePostScripts();
+
+            WriteLine("</body>");
+            WriteLine("</html>");
         }
 
         /// <summary>
         /// Override this function to specify extra content for the documents header.
         /// No need to include <head></head> tags.
         /// </summary>
-        protected virtual void WriterHead()
-        {
-            
-        }
+        protected virtual void WriteHead() { }
 
         /// <summary>
         /// Override this function to specify extra content for the documents body.
         /// No need to include <body></body> tags.
         /// </summary>
-        protected virtual void WriteBody()
-        {
-            
-        }
+        protected virtual void WriteBody() { }
 
         /// <summary>
         /// Called in the head section of the document.
         /// Override to implement the running of javascript before the rest of the document is loaded.
         /// </summary>
-        protected virtual void WritePreScripts()
-        {
-            
-        }
+        protected virtual void WritePreScripts() { }
 
         /// <summary>
         /// Called right at the end of the html document.
         /// Override to implement the running of javascript before the rest of the document is loaded.
         /// </summary>
-        protected virtual void WritePostScripts()
-        {
-            
-        }
+        protected virtual void WritePostScripts() { }
 
         #endregion
 

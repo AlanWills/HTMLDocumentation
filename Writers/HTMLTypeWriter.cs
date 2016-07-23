@@ -25,69 +25,70 @@ namespace HTMLDocumentation
             Type = type;
         }
 
-        public void WriteType()
+        /// <summary>
+        /// Set up the style sheet and title for the Class documentation page.
+        /// </summary>
+        protected override void WriteHead()
         {
-            WriteLine("<!DOCTYPE html/>");
-            WriteLine("<html>");
+            base.WriteHead();
 
-            WriteLine("<head>");
-            Indent();
+            // TODO Path.Combine these
+            WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectoryInfo.FullName + "\\Styles\\class.css\"></link>");
+            WriteLine("<title>" + Type.Name + "</title>");
+        }
+
+        /// <summary>
+        /// Write each of the different type of methods in an accordion structure
+        /// </summary>
+        protected override void WriteBody()
+        {
+            base.WriteBody();
+
+            WriteLine("<header>");
+            WriteLine("<h1 id=\"page_title\">" + Type.Name + " Class</h1>");
+            WriteLine("</header>");
+
+            // Write a link back to the linker for the directory this type's .cs file is in
+            FileInfo[] info = CodeDirectoryInfo.GetFiles(Type.Name + ".cs", SearchOption.AllDirectories);
+            Debug.Assert(info.Length == 1);
+            WriteLine("<a href=\"" + info[0].Directory.Name + HTMLDirectoryLinkerWriter.LinkerString + "\">" + info[0].Directory.Name + "</a>");
+            WriteLine("<br/>");
+
+            // Write a link to the files above and below this type's file if they exist
+            // We cannot use the actual html files for this as they may not have been created yet
+            // This also means that we will not write linker files by mistake
+            List<FileInfo> filesInDir = info[0].Directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
+            int index = filesInDir.FindIndex(x => x.Name == info[0].Name);
+            Debug.Assert(index > -1);
+
+            // Write the previous file if it exists
+            if (index > 0)
             {
-                // TODO Path.Combine these
-                WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectoryInfo.FullName + "\\Styles\\class.css\"></link>");
-                WriteLine("<title>" + Type.Name + "</title>");
-            }
-            UnIndent();
-            WriteLine("</head>");
-
-            WriteLine("<body>");
-            Indent();
-            {
-                WriteLine("<header>");
-                WriteLine("<h1 id=\"page_title\">" + Type.Name + " Class</h1>");
-                WriteLine("</header>");
-
-                // Write a link back to the linker for the directory this type's .cs file is in
-                FileInfo[] info = CodeDirectoryInfo.GetFiles(Type.Name + ".cs", SearchOption.AllDirectories);
-                Debug.Assert(info.Length == 1);
-                WriteLine("<a href=\"" + info[0].Directory.Name + HTMLDirectoryLinkerWriter.LinkerString + "\">" + info[0].Directory.Name + "</a>");
+                WriteLine("<a href=\"" + filesInDir[index - 1].GetExtensionlessFileName() + ".html\">" + filesInDir[index - 1].GetExtensionlessFileName() + "</a>");
                 WriteLine("<br/>");
+            }
 
-                // Write a link to the files above and below this type's file if they exist
-                // We cannot use the actual html files for this as they may not have been created yet
-                // This also means that we will not write linker files by mistake
-                List<FileInfo> filesInDir = info[0].Directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
-                int index = filesInDir.FindIndex(x => x.Name == info[0].Name);
-                Debug.Assert(index > -1);
+            // Write the next file if it exists
+            if (index < filesInDir.Count - 1)
+            {
+                WriteLine("<a href=\"" + filesInDir[index + 1].GetExtensionlessFileName() + ".html\">" + filesInDir[index + 1].GetExtensionlessFileName() + "</a>");
+                WriteLine("<br/>");
+            }
 
-                // Write the previous file if it exists
-                if (index > 0)
-                {
-                    WriteLine("<a href=\"" + filesInDir[index - 1].GetExtensionlessFileName() + ".html\">" + filesInDir[index - 1].GetExtensionlessFileName() + "</a>");
-                    WriteLine("<br/>");
-                }
+            //foreach (FieldInfo property in type.GetFields())
+            //{
+            //    if (type.Name == property.DeclaringType.Name)
+            //    {
+            //        WriteLine("<h4>" + property.Name + "</h4>");
+            //    }
+            //}
 
-                // Write the next file if it exists
-                if (index < filesInDir.Count - 1)
-                {
-                    WriteLine("<a href=\"" + filesInDir[index + 1].GetExtensionlessFileName() + ".html\">" + filesInDir[index + 1].GetExtensionlessFileName() + "</a>");
-                    WriteLine("<br/>");
-                }
-
-                //foreach (FieldInfo property in type.GetFields())
-                //{
-                //    if (type.Name == property.DeclaringType.Name)
-                //    {
-                //        WriteLine("<h4>" + property.Name + "</h4>");
-                //    }
-                //}
-
-                /*
-                 * Have headers + bookmarks for each section (Instance and static, then subsections of public & non-public)
-                 * Don't write property setters and getters - do that in properties - remove the setters and getters when we iterate over properties?
-                 * Template arguments etc.
-                 * Document properties, fields, events
-                 */
+            /*
+             * Have headers + bookmarks for each section (Instance and static, then subsections of public & non-public)
+             * Don't write property setters and getters - do that in properties - remove the setters and getters when we iterate over properties?
+             * Template arguments etc.
+             * Document properties, fields, events
+             */
 
             // Methods
             {
@@ -105,15 +106,17 @@ namespace HTMLDocumentation
                 WriteMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                 UnIndent();
             }
+        }
 
-            }
-            UnIndent();
+        /// <summary>
+        /// Add the script which will set up the expanding of the accordion.
+        /// </summary>
+        protected override void WritePostScripts()
+        {
+            base.WritePostScripts();
 
             // TODO Path.Combine these
-            WriteLine("<script src=\"" + DocsDirectoryInfo.FullName + "\\Scripts\\accordion_script.js\"></script>");
-            WriteLine("</body>");
-
-            WriteLine("</html>");
+            WriteLine("<script src=\"" + Path.Combine(DocsDirectoryInfo.FullName, "Scripts\\accordion_script.js") + "\"></script>");
         }
 
         /// <summary>

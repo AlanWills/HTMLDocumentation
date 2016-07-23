@@ -26,22 +26,23 @@ namespace HTMLDocumentation
         }
 
         /// <summary>
-        /// Creates an HTML page with links to the pages for classes and directories on this level.
+        /// Sets up the style sheets and title for the directory linker page.
         /// </summary>
-        public void WriteDirectory()
+        protected override void WriteHead()
         {
-            WriteLine("<!DOCTYPE html/>");
-            WriteLine("<html>");
+            base.WriteHead();
 
-            WriteLine("<head>");
-            Indent();
             WriteLine("<link rel=\"stylesheet\" href=\"" + DocsDirectoryInfo.FullName + "\\Styles\\class.css\">");
             WriteLine("<title>" + DirectoryInfo.Name + "</title>");
-            UnIndent();
-            WriteLine("</head>");
+        }
 
-            WriteLine("<body>");
-            Indent();
+        /// <summary>
+        /// Writes links to each page in this directory, be it a Class or Directory page.
+        /// </summary>
+        protected override void WriteBody()
+        {
+            base.WriteBody();
+
             WriteLine("<header>");
             WriteLine("<h1 id=\"page_title\">" + DirectoryInfo.Name + " Directory</h1>");
             WriteLine("</header>");
@@ -71,10 +72,6 @@ namespace HTMLDocumentation
                 WriteLine("<a href=\"" + Path.Combine(directory.Name, directory.Name + LinkerString) + "\">" + directory.Name + " Directory" + "</a>");
                 WriteLine("<br/>");
             }
-
-            WriteLine("</body>");
-
-            WriteLine("</html>");
         }
     }
 }
