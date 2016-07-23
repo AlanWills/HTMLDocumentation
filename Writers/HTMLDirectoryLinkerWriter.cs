@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace HTMLDocumentation
 {
@@ -15,6 +16,16 @@ namespace HTMLDocumentation
         /// </summary>
         private DirectoryInfo DirectoryInfo { get; set; }
 
+        /// <summary>
+        /// The valid html files in this directory that we wish to create links to
+        /// </summary>
+        private List<FileInfo> ValidHTMLFiles { get; set; }
+
+        /// <summary>
+        /// The valid directories in this directory that we wish to create links to (create link to their linker page)
+        /// </summary>
+        private List<DirectoryInfo> ValidDirectories { get; set; }
+
         public const string LinkerString = " Linker.html";
 
         #endregion
@@ -23,6 +34,21 @@ namespace HTMLDocumentation
             base(Path.Combine(directoryInfo.FullName, directoryInfo.Name + LinkerString))
         {
             DirectoryInfo = directoryInfo;
+        }
+
+        #region Virtual Functions
+
+        protected override void MarshalData()
+        {
+            base.MarshalData();
+
+            // Get all files except the linker file
+            ValidHTMLFiles = new List<FileInfo>(DirectoryInfo.GetFiles("*.html", SearchOption.TopDirectoryOnly));
+            ValidHTMLFiles.RemoveAll(x => x.Name == DirectoryInfo.Name + LinkerString);
+
+            // Ignore invalid directories
+            ValidDirectories = new List<DirectoryInfo>(DirectoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly));
+            ValidDirectories.RemoveAll(x => x.ShouldIgnoreDirectory());
         }
 
         /// <summary>
@@ -47,31 +73,21 @@ namespace HTMLDocumentation
             WriteLine("<h1 id=\"page_title\">" + DirectoryInfo.Name + " Directory</h1>");
             WriteLine("</header>");
 
-            foreach (FileInfo file in DirectoryInfo.GetFiles("*.html", SearchOption.TopDirectoryOnly))
+            foreach (FileInfo file in ValidHTMLFiles)
             {
-                // Don't write the linker file
-                if (file.Name == DirectoryInfo.Name + LinkerString)
-                {
-                    continue;
-                }
-
                 // Write the links to the .html files - can use a relative path since it is in the same folder
                 WriteLine("<a href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.GetExtensionlessFileName() + "</a>");
                 WriteLine("<br/>");
             }
 
-            foreach (DirectoryInfo directory in DirectoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly))
+            foreach (DirectoryInfo directory in ValidDirectories)
             {
-                // Don't write links to invalid directories
-                if (directory.ShouldIgnoreDirectory())
-                {
-                    continue;
-                }
-
                 // Write the links to the directory linker .html files - can use relative paths since it is in a sub folder
                 WriteLine("<a href=\"" + Path.Combine(directory.Name, directory.Name + LinkerString) + "\">" + directory.Name + " Directory" + "</a>");
                 WriteLine("<br/>");
             }
         }
+
+        #endregion
     }
 }

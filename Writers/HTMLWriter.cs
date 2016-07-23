@@ -36,6 +36,8 @@ namespace HTMLDocumentation
         /// </summary>
         public void Write()
         {
+            MarshalData();
+
             WriteLine("<!DOCTYPE html/>");
             WriteLine("<html>");
 
@@ -59,6 +61,12 @@ namespace HTMLDocumentation
             WriteLine("</body>");
             WriteLine("</html>");
         }
+
+        /// <summary>
+        /// Called at the start of the Write function.
+        /// Used to populate class data for use in the Write function rather than doing it in the Write function itself.
+        /// </summary>
+        protected virtual void MarshalData() { }
 
         /// <summary>
         /// Override this function to specify extra content for the documents header.
