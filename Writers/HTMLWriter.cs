@@ -50,7 +50,7 @@ namespace HTMLDocumentation
             UnIndent();
             WriteLine("</head>");
 
-            WriteLine("<body class=\"w3 - container\">");
+            WriteLine("<body class=\"w3 - container\" id=\"page_body\">");
             Indent();
             {
                 WriteBody();

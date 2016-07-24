@@ -61,6 +61,20 @@ namespace HTMLDocumentation
         {
             base.WriteBody();
 
+            // Sidebar
+            WriteLine("<nav class=\"w3-sidenav w3-collapse w3-white w3-card-2 w3-animate-left\" style=\"width:200px;\" id=\"pageSideBar\">");
+            Indent();
+
+            WriteLine("<a href=\"#page_body\">Page Top</a>");
+            WriteLine("<a href=\"#public_methods\">Public Methods</a>");
+            WriteLine("<a href=\"#non_public_methods\">Non Public Methods</a>");
+
+            UnIndent();
+            WriteLine("</nav>");
+
+            WriteLine("<div class=\"w3-main\" style=\"margin-left:205px\">");
+            WriteLine("<span class=\"w3-opennav w3-hide-large\" onclick=\"w3_open()\">&#9776;</span>");
+
             WriteLine("<header class=\"w3-container w3-blue w3-center\">");
             WriteLine("<h1 id=\"page_title\">" + Type.Name + " Class</h1>");
             WriteLine("</header>");
@@ -91,15 +105,17 @@ namespace HTMLDocumentation
             UnIndent();
             WriteLine("</ul>");
 
-            //foreach (FieldInfo property in type.GetFields())
-            //{
-            //    if (type.Name == property.DeclaringType.Name)
-            //    {
-            //        WriteLine("<h4>" + property.Name + "</h4>");
-            //    }
-            //}
+            //            < nav class="w3-sidenav w3-collapse w3-white w3-card-2 w3-animate-left" style="width:200px;" id="mySidenav">
+            //  <a href = "javascript:void(0)" onclick="w3_close()"
+            //  class="w3-closenav w3-large w3-hide-large">Close &times;</a>
+            //  <a href = "#" > Link 1</a>
+            //  <a href = "#" > Link 2</a>
+            //  <a href = "#" > Link 3</a>
+            //  <a href = "#" > Link 4</a>
+            //  <a href = "#" > Link 5</a>
+            //</nav>
 
-            /*
+             /*
              * Have headers + bookmarks for each section (Instance and static, then subsections of public & non-public)
              * Don't write property setters and getters - do that in properties - remove the setters and getters when we iterate over properties?
              * Template arguments etc.
@@ -122,6 +138,15 @@ namespace HTMLDocumentation
                 WriteMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
                 UnIndent();
             }
+
+            WriteLine("</div>");
+        }
+
+        protected override void WritePostScripts()
+        {
+            base.WritePostScripts();
+
+            WriteLine("<script href=\"" + Path.Combine(DocsDirectoryInfo.FullName, "nav_bar.js") + "\" />");
         }
 
         #endregion
@@ -185,18 +210,7 @@ namespace HTMLDocumentation
             }
             parametersString += ")";
 
-            //          < div class="w3-accordion w3-light-grey">
-            //            <button onclick="expand('Demo1')" class="w3-btn-block w3-left-align">
-            //              Accordion
-            //            </button>
-            //            <div id = "Demo1" class="w3-accordion-content">
-            //              <a href = "#" > Link 1</a>
-            //              <a href = "#" > Link 2</a>
-            //              <a href = "#" > Link 3</a>
-            //            </div>
-            //          </div>
-
-            WriteLine("<div class=\"w3-card-4\" style=\"width: 25%\">");
+            WriteLine("<div class=\"w3-card-4 w3-margin-top w3-margin-bottom\">");
             Indent();
 
             // Construct the html for the return type
