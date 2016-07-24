@@ -57,16 +57,6 @@ namespace HTMLDocumentation
             DirectoryInfo docsDirectoryInfo = Directory.CreateDirectory(docsDirectory);
             HTMLWriter.DocsDirectoryInfo = docsDirectoryInfo;
 
-            // Log the creation of the scripts directory
-            Console.WriteLine("Creating scripts directory");
-
-            // Create a directory in the docs directory for the scripts
-            string scriptsDirectory = Path.Combine(docsDirectory, "Scripts");
-            Directory.CreateDirectory(scriptsDirectory);
-
-            // Copy the style sheets into the documentation directory and override any existing ones
-            File.Copy(Path.Combine(dllPath, "accordion_script.js"), Path.Combine(scriptsDirectory, "accordion_script.js"), true);
-
             /*
              * ALGORITHM:
              * 

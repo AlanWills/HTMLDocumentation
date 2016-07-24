@@ -61,36 +61,35 @@ namespace HTMLDocumentation
         {
             base.WriteBody();
 
-            WriteLine("<header>");
+            WriteLine("<header class=\"w3-container w3-blue w3-center\">");
             WriteLine("<h1 id=\"page_title\">" + Type.Name + " Class</h1>");
             WriteLine("</header>");
+
+            // Create a navbar for files in this directory
+            WriteLine("<ul class=\"w3-navbar w3-border w3-light-grey\">");
+            Indent();
 
             // Write a link back to the linker for the directory this type's .cs file is in
             FileInfo[] info = CodeDirectoryInfo.GetFiles(Type.Name + ".cs", SearchOption.AllDirectories);
             Debug.Assert(info.Length == 1);
-            WriteLine("<a href=\"" + info[0].Directory.Name + HTMLDirectoryLinkerWriter.LinkerString + "\">" + info[0].Directory.Name + "</a>");
-            WriteLine("<br/>");
 
-            // Write a link to the files above and below this type's file if they exist
+            // Write the main link back to the directory linker
+            FileInfo thisTypeFileInfo = info[0];
+            WriteLine("<li><a class=\"w3-green\" href=\"" + thisTypeFileInfo.Directory.Name + HTMLDirectoryLinkerWriter.LinkerString + "\">" + thisTypeFileInfo.Directory.Name + "</a></li>");
+
+            // Write a link to the other files in the directory
             // We cannot use the actual html files for this as they may not have been created yet
             // This also means that we will not write linker files by mistake
-            List<FileInfo> filesInDir = info[0].Directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
-            int index = filesInDir.FindIndex(x => x.Name == info[0].Name);
-            Debug.Assert(index > -1);
+            List<FileInfo> filesInDir = thisTypeFileInfo.Directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
+            filesInDir.Remove(thisTypeFileInfo);
 
-            // Write the previous file if it exists
-            if (index > 0)
+            foreach (FileInfo file in filesInDir)
             {
-                WriteLine("<a href=\"" + filesInDir[index - 1].GetExtensionlessFileName() + ".html\">" + filesInDir[index - 1].GetExtensionlessFileName() + "</a>");
-                WriteLine("<br/>");
+                WriteLine("<li><a href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.GetExtensionlessFileName() + "</a></li>");
             }
 
-            // Write the next file if it exists
-            if (index < filesInDir.Count - 1)
-            {
-                WriteLine("<a href=\"" + filesInDir[index + 1].GetExtensionlessFileName() + ".html\">" + filesInDir[index + 1].GetExtensionlessFileName() + "</a>");
-                WriteLine("<br/>");
-            }
+            UnIndent();
+            WriteLine("</ul>");
 
             //foreach (FieldInfo property in type.GetFields())
             //{
@@ -211,7 +210,7 @@ namespace HTMLDocumentation
             //}
             //methodString += "</button>";
 
-            WriteLine("<header class=\"w3-container w3-blue w3-hover-shadow\"");
+            WriteLine("<header class=\"w3-container w3-pale-blue w3-leftbar w3-border-blue w3-hover-shadow\"");
             Indent();
                 WriteLine("<h1>" + method.Name + "</h1>");
             UnIndent();
