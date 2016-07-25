@@ -66,9 +66,9 @@ namespace HTMLDocumentation
             Indent();
 
             WriteLine("<h6 class=\"w3-center\">Sections</h6>");
-            WriteLine("<a href=\"#page_body\">Page Top</a>");
-            WriteLine("<a href=\"#public_methods\">Public Methods</a>");
-            WriteLine("<a href=\"#non_public_methods\">Non Public Methods</a>");
+            WriteLine("<a class=\"w3-border w3-border-blue w3-hover-pale-blue w3-margin\" href=\"#page_body\">Page Top</a>");
+            WriteLine("<a class=\"w3-border w3-border-blue w3-hover-pale-blue w3-margin\" href=\"#public_methods\">Public Methods</a>");
+            WriteLine("<a class=\"w3-border w3-border-blue w3-hover-pale-blue w3-margin\" href=\"#non_public_methods\">Non Public Methods</a>");
 
             UnIndent();
             WriteLine("</nav>");
