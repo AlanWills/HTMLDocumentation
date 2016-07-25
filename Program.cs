@@ -35,6 +35,10 @@ namespace HTMLDocumentation
             string dllPath = Path.Combine(codeDirectoryInfo.FullName, projectPath);
             Assembly assembly = Assembly.Load("HTMLDocumentation");
             //Assembly assembly = Assembly.LoadFile(dllPath);
+            Console.WriteLine("Assembly loaded successfully");
+
+            // Detect the w3 library and if not, bootstrap it
+            // TODO
 
             // The full path to the root directory of the code - we will use this to mirror the directory tree on our webpage
             HTMLWriter.CodeDirectoryInfo = codeDirectoryInfo;
