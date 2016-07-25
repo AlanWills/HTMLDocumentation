@@ -62,9 +62,10 @@ namespace HTMLDocumentation
             base.WriteBody();
 
             // Sidebar
-            WriteLine("<nav class=\"w3-sidenav w3-collapse w3-white w3-card-2 w3-animate-left\" style=\"width:200px;\" id=\"pageSideBar\">");
+            WriteLine("<nav class=\"w3-sidenav w3-white w3-card-2 w3-animate-left\" style=\"width:25%;\" id=\"pageSideBar\">");
             Indent();
 
+            WriteLine("<h6 class=\"w3-center\">Sections</h6>");
             WriteLine("<a href=\"#page_body\">Page Top</a>");
             WriteLine("<a href=\"#public_methods\">Public Methods</a>");
             WriteLine("<a href=\"#non_public_methods\">Non Public Methods</a>");
@@ -72,8 +73,7 @@ namespace HTMLDocumentation
             UnIndent();
             WriteLine("</nav>");
 
-            WriteLine("<div class=\"w3-main\" style=\"margin-left:205px\">");
-            WriteLine("<span class=\"w3-opennav w3-hide-large\" onclick=\"w3_open()\">&#9776;</span>");
+            WriteLine("<div style=\"margin-left:25%\">");
 
             WriteLine("<header class=\"w3-container w3-blue w3-center\">");
             WriteLine("<h1 id=\"page_title\">" + Type.Name + " Class</h1>");
@@ -140,13 +140,6 @@ namespace HTMLDocumentation
             }
 
             WriteLine("</div>");
-        }
-
-        protected override void WritePostScripts()
-        {
-            base.WritePostScripts();
-
-            WriteLine("<script href=\"" + Path.Combine(DocsDirectoryInfo.FullName, "nav_bar.js") + "\" />");
         }
 
         #endregion
