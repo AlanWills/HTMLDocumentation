@@ -25,6 +25,16 @@ namespace HTMLDocumentation
         /// </summary>
         private XPathDocument Documentation { get; set; }
 
+        /// <summary>
+        /// The public instance methods declared in this class
+        /// </summary>
+        private List<MethodInfo> PublicInstanceMethods { get; set; }
+
+        /// <summary>
+        /// The non-public instance methods declared in this class
+        /// </summary>
+        private List<MethodInfo> NonPublicInstanceMethods { get; set; }
+
         #endregion
 
         public HTMLTypeWriter(Type type, string documentationFilePath) :
@@ -42,6 +52,14 @@ namespace HTMLDocumentation
             // Ultimately I think we want to compile the docs ourselves for each class - do this with Process and then see the docs on msdn for compiling docs
             string xmlDocs = Directory.GetCurrentDirectory() + "\\" + Assembly.GetExecutingAssembly().GetName().Name + ".xml";
             Documentation = new XPathDocument(xmlDocs);
+
+            PublicInstanceMethods = new List<MethodInfo>(Type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly));
+            // Only write methods that are declared in this class and are not getters and setters for Properties
+            PublicInstanceMethods.RemoveAll(x => ShouldWriteMethod(x));
+
+            NonPublicInstanceMethods = new List<MethodInfo>(Type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly));
+            // Only write methods that are declared in this class and are not getters and setters for Properties
+            NonPublicInstanceMethods.RemoveAll(x => ShouldWriteMethod(x));
         }
 
         /// <summary>
@@ -62,23 +80,93 @@ namespace HTMLDocumentation
             base.WriteBody();
 
             // Sidebar
-            WriteLine("<nav class=\"w3-sidenav w3-white w3-card-2 w3-animate-left\" style=\"width:25%;\" id=\"pageSideBar\">");
+            WriteSideBar();
+
+            WriteLine("<div style=\"margin-left:200px\">");
+
+            WritePageHeader();
+            WriteNavBar();
+
+            /*
+            * Have headers + bookmarks for each section (Instance and static, then subsections of public & non-public)
+            * Don't write property setters and getters - do that in properties - remove the setters and getters when we iterate over properties?
+            * Template arguments etc.
+            * Document properties, fields, events
+            */
+
+            // Methods
+            {
+                WriteLine("<h2 id=\"public_methods\">Public Methods</h2>");
+
+                Indent();
+                // Write public instance methods declared by this type
+                WriteMethods(PublicInstanceMethods);
+                UnIndent();
+
+                WriteLine("<h2 id=\"non_public_methods\">Non Public Methods</h2>");
+
+                Indent();
+                // Write non public instance methods declared by this type
+                WriteMethods(NonPublicInstanceMethods);
+                UnIndent();
+            }
+
+            WriteLine("</div>");
+        }
+
+        #endregion
+
+        #region Body Writing Utility Functions
+
+        /// <summary>
+        /// Write the side bar for navigation of sections for this class
+        /// </summary>
+        private void WriteSideBar()
+        {
+            WriteLine("<nav class=\"w3-sidenav w3-white w3-card-2 w3-animate-left\" style=\"width:200px;\" id=\"pageSideBar\">");
             Indent();
 
             WriteLine("<h6 class=\"w3-center\">Sections</h6>");
+
+            WriteLine("<div class=\"w3-dropdown-hover w3-hover-white\">");
             WriteLine("<a class=\"w3-border w3-border-blue w3-hover-pale-blue w3-margin\" href=\"#page_body\">Page Top</a>");
-            WriteLine("<a class=\"w3-border w3-border-blue w3-hover-pale-blue w3-margin\" href=\"#public_methods\">Public Methods</a>");
+            WriteLine("</div>");
+
+            WriteLine("<div class=\"w3-dropdown-hover w3-hover-white\">");
+            WriteLine("<a class=\"w3-border w3-border-blue w3-hover-pale-blue w3-margin\" href=\"#public_methods\">Public Methods <i class=\"fa fa-caret-down\"></i></a>");
+            WriteLine("<div class=\"w3-dropdown-content w3-white w3-card-4\">");
+
+            foreach (MethodInfo method in PublicInstanceMethods)
+            {
+                //WriteLine("<a id=\"#" + method.Name + "\">" + method.Name + "</a>");
+            }
+
+            WriteLine("</div>");
+            WriteLine("</div>");
+
+            WriteLine("<div class=\"w3-dropdown-hover w3-hover-white\">");
             WriteLine("<a class=\"w3-border w3-border-blue w3-hover-pale-blue w3-margin\" href=\"#non_public_methods\">Non Public Methods</a>");
+            WriteLine("</div>");
 
             UnIndent();
             WriteLine("</nav>");
+        }
 
-            WriteLine("<div style=\"margin-left:25%\">");
-
+        /// <summary>
+        /// Write the header section of our body which holds the title of the page.
+        /// </summary>
+        private void WritePageHeader()
+        {
             WriteLine("<header class=\"w3-container w3-blue w3-center\">");
             WriteLine("<h1 id=\"page_title\">" + Type.Name + " Class</h1>");
             WriteLine("</header>");
+        }
 
+        /// <summary>
+        /// Write the nav bar along the top for navigation of files in this directory
+        /// </summary>
+        private void WriteNavBar()
+        {
             // Create a navbar for files in this directory
             WriteLine("<ul class=\"w3-navbar w3-border w3-light-grey\">");
             Indent();
@@ -104,47 +192,11 @@ namespace HTMLDocumentation
 
             UnIndent();
             WriteLine("</ul>");
-
-            //            < nav class="w3-sidenav w3-collapse w3-white w3-card-2 w3-animate-left" style="width:200px;" id="mySidenav">
-            //  <a href = "javascript:void(0)" onclick="w3_close()"
-            //  class="w3-closenav w3-large w3-hide-large">Close &times;</a>
-            //  <a href = "#" > Link 1</a>
-            //  <a href = "#" > Link 2</a>
-            //  <a href = "#" > Link 3</a>
-            //  <a href = "#" > Link 4</a>
-            //  <a href = "#" > Link 5</a>
-            //</nav>
-
-             /*
-             * Have headers + bookmarks for each section (Instance and static, then subsections of public & non-public)
-             * Don't write property setters and getters - do that in properties - remove the setters and getters when we iterate over properties?
-             * Template arguments etc.
-             * Document properties, fields, events
-             */
-
-            // Methods
-            {
-                WriteLine("<h2 id=\"public_methods\">Public Methods</h2>");
-
-                Indent();
-                // Write public instance methods declared by this type
-                WriteMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
-                UnIndent();
-
-                WriteLine("<h2 id=\"non_public_methods\">Non Public Methods</h2>");
-
-                Indent();
-                // Write non public instance methods declared by this type
-                WriteMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-                UnIndent();
-            }
-
-            WriteLine("</div>");
         }
 
         #endregion
 
-        #region Utility Functions
+        #region Method Writing Utility Functions
 
         /// <summary>
         /// Utility function for determining whether a method should be written to this type's HTML page.
@@ -160,19 +212,14 @@ namespace HTMLDocumentation
         }
 
         /// <summary>
-        /// Iterates over all the methods of the current type and attempts to right any methods which satisfy the input
-        /// flags and also the ShouldWriteMethod.
+        /// Iterates over all the inputted methods.  These are guarenteed to satisfy the ShouldWriteMethod.
         /// </summary>
         /// <param name="filterFlags"></param>
-        private void WriteMethods(BindingFlags filterFlags)
+        private void WriteMethods(List<MethodInfo> methods)
         {
-            foreach (MethodInfo method in Type.GetMethods(filterFlags))
+            foreach (MethodInfo method in methods)
             {
-                // Only write methods that are declared in this class and are not getters and setters for Properties
-                if (ShouldWriteMethod(method))
-                {
-                    WriteMethod(method);
-                }
+                WriteMethod(method);
             }
         }
 
@@ -217,7 +264,7 @@ namespace HTMLDocumentation
             //}
             //methodString += "</button>";
 
-            WriteLine("<header class=\"w3-container w3-pale-blue w3-leftbar w3-border-blue w3-hover-shadow\"");
+            WriteLine("<header id=\"" + method.Name + "\" class=\"w3-container w3-pale-blue w3-leftbar w3-border-blue w3-hover-shadow\"");
             Indent();
                 WriteLine("<h1>" + method.Name + "</h1>");
             UnIndent();
