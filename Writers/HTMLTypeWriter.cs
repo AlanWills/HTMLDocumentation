@@ -124,38 +124,24 @@ namespace HTMLDocumentation
         /// </summary>
         private void WriteSideBar()
         {
-            WriteLine("<nav class=\"w3-sidenav w3-white w3-card-2 w3-animate-left\" style=\"width:200px;\" id=\"pageSideBar\">");
+            WriteLine("<nav class=\"w3-sidenav w3-white\" style=\"width:200px;\" id=\"pageSideBar\">");
             Indent();
 
             WriteLine("<h6 class=\"w3-center\">Sections</h6>");
-
-            WriteLine("<div class=\"w3-dropdown-hover w3-hover-white\">");
-            WriteLine("<a class=\"w3-border w3-border-blue w3-hover-pale-blue w3-margin\" href=\"#page_body\">Page Top</a>");
-            WriteLine("</div>");
-
-            WriteLine("<div class=\"w3-dropdown-hover w3-hover-white\">");
-            WriteLine("<a class=\"w3-border w3-border-blue w3-hover-pale-blue w3-margin\" href=\"#public_methods\">Public Methods <i class=\"fa fa-caret-down\"></i></a>");
-            WriteLine("<div class=\"w3-dropdown-content w3-white w3-card-4\">");
+            WriteLine("<a class=\"w3-pale-blue w3-border w3-border-blue w3-hover-white w3-margin\" href=\"#page_body\">Page Top</a>");
+            WriteLine("<a class=\"w3-pale-blue w3-border w3-border-blue w3-hover-white w3-margin\" href=\"#public_methods\">Public Methods</a>");
 
             foreach (MethodInfo method in PublicInstanceMethods)
             {
-                WriteLine("<a id=\"#" + method.Name + "\">" + method.Name + "</a>");
+                WriteLine("<a class=\"w3-margin-left w3-small\" href=\"#" + method.Name + "\">" + method.Name + "</a>");
             }
 
-            WriteLine("</div>");
-            WriteLine("</div>");
-
-            WriteLine("<div class=\"w3-dropdown-hover w3-hover-white\">");
-            WriteLine("<a class=\"w3-border w3-border-blue w3-hover-pale-blue w3-margin\" href=\"#non_public_methods\">Non Public Methods</a>");
-            WriteLine("<div class=\"w3-dropdown-content w3-white w3-card-4\">");
+            WriteLine("<a class=\"w3-pale-blue w3-border w3-border-blue w3-hover-white w3-margin\" href=\"#non_public_methods\">Non Public Methods</a>");
 
             foreach (MethodInfo method in NonPublicInstanceMethods)
             {
-                WriteLine("<a id=\"#" + method.Name + "\">" + method.Name + "</a>");
+                WriteLine("<a class=\"w3-margin-left w3-small\" href=\"#" + method.Name + "\">" + method.Name + "</a>");
             }
-
-            WriteLine("</div>");
-            WriteLine("</div>");
 
             UnIndent();
             WriteLine("</nav>");
@@ -186,22 +172,23 @@ namespace HTMLDocumentation
 
             // Write the main link back to the directory linker
             FileInfo thisTypeFileInfo = info[0];
-            WriteLine("<li><a class=\"w3-green\" href=\"" + thisTypeFileInfo.Directory.Name + HTMLDirectoryLinkerWriter.LinkerString + "\">" + thisTypeFileInfo.Directory.Name + "</a></li>");
+            WriteLine("<li><a class=\"w3-pale-green w3-hover-green\" href=\"" + thisTypeFileInfo.Directory.Name + HTMLDirectoryLinkerWriter.LinkerString + "\">" + thisTypeFileInfo.Directory.Name + "</a></li>");
 
             // Write links to the other directories in the directory yb writing a link to their linker page
             // Cannot use the actual html linker files as they will not have been created
             List<DirectoryInfo> directoriesInDir = thisTypeFileInfo.Directory.GetDirectories("*", SearchOption.TopDirectoryOnly).ToList();
+            directoriesInDir.RemoveAll(x => x.FullName == thisTypeFileInfo.Directory.FullName || x.ShouldIgnoreCodeDirectory());
             
             foreach (DirectoryInfo directory in directoriesInDir)
             {
-                WriteLine("<li><a href=\"" + Path.Combine(directory.Name, directory.Name + HTMLDirectoryLinkerWriter.LinkerString) + "\">" + directory.Name + "</a></li>");
+                WriteLine("<li><a class=\"w3-pale-green w3-hover-green\" href=\"" + Path.Combine(directory.Name, directory.Name + HTMLDirectoryLinkerWriter.LinkerString) + "\">" + directory.Name + "</a></li>");
             }
 
             // Write a link to the other files in the directory
             // We cannot use the actual html files for this as they may not have been created yet
             // This also means that we will not write this directory's linker file by mistake
             List<FileInfo> filesInDir = thisTypeFileInfo.Directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
-            filesInDir.Remove(thisTypeFileInfo);
+            filesInDir.RemoveAll(x => x.FullName == thisTypeFileInfo.FullName);
 
             foreach (FileInfo file in filesInDir)
             {
@@ -275,16 +262,15 @@ namespace HTMLDocumentation
             //string returnTypeString = "<span title=\"Return type\" class=\"return_type\">" + method.ReturnParameter.ParameterType.Name + "</span> ";
 
             //// Construct the html for the method name
-            //string methodString = "<button type=\"button\" class=\"w3-btn-block w3-left-align\" onclick=\"expand('" + method.Name + "')\">" + returnTypeString + method.Name;
-            //if (method.IsVirtual)
-            //{
-            //    methodString += " <span class=\"virtual\" title=\"Method is virtual or overrides a virtual function\">(Virtual)</span>";
-            //}
-            //methodString += "</button>";
+            string methodString = method.Name;
+            if (method.IsVirtual)
+            {
+                methodString += " <span class=\"w3-tag w3-margin-left w3-blue\">Virtual</span>";
+            }
 
             WriteLine("<header id=\"" + method.Name + "\" class=\"w3-container w3-pale-blue w3-leftbar w3-border-blue w3-hover-shadow\"");
             Indent();
-                WriteLine("<h1>" + method.Name + "</h1>");
+                WriteLine("<h1>" + methodString + "</h1>");
             UnIndent();
             WriteLine("</header>");
 

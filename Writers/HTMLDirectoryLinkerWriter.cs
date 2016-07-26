@@ -48,7 +48,7 @@ namespace HTMLDocumentation
 
             // Ignore invalid directories
             ValidDirectories = new List<DirectoryInfo>(DirectoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly));
-            ValidDirectories.RemoveAll(x => x.ShouldIgnoreDirectory());
+            ValidDirectories.RemoveAll(x => x.ShouldIgnoreHTMLDirectory());
         }
 
         /// <summary>
