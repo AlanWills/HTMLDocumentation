@@ -80,7 +80,6 @@ namespace HTMLDocumentation
         {
             base.WriteBody();
 
-            // Sidebar
             WriteSideBar();
 
             WriteLine("<div style=\"margin-left:200px\">");
@@ -192,7 +191,7 @@ namespace HTMLDocumentation
 
             foreach (FileInfo file in filesInDir)
             {
-                WriteLine("<li><a href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.GetExtensionlessFileName() + "</a></li>");
+                WriteLine("<li><a class=\"w3-pale-blue w3-hover-blue\" href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.GetExtensionlessFileName() + "</a></li>");
             }
 
             UnIndent();
@@ -268,9 +267,9 @@ namespace HTMLDocumentation
                 methodString += " <span class=\"w3-tag w3-margin-left w3-blue\">Virtual</span>";
             }
 
-            WriteLine("<header id=\"" + method.Name + "\" class=\"w3-container w3-pale-blue w3-leftbar w3-border-blue w3-hover-shadow\"");
+            WriteLine("<header id=\"" + method.Name + "\" class=\"w3-container w3-pale-blue w3-leftbar w3-border-blue w3-hover-shadow\">");
             Indent();
-                WriteLine("<h1>" + methodString + "</h1>");
+                WriteLine("<h6>" + methodString + "</h6>");
             UnIndent();
             WriteLine("</header>");
 

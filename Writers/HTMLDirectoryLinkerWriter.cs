@@ -68,23 +68,111 @@ namespace HTMLDocumentation
         {
             base.WriteBody();
 
-            WriteLine("<header>");
-            WriteLine("<h1 id=\"page_title\">" + DirectoryInfo.Name + " Directory</h1>");
-            WriteLine("</header>");
+            WriteSideBar();
+
+            WriteLine("<div style=\"margin-left:200px\">");
+            Indent();
+
+            WritePageHeader();
+            WriteNavBar();
+
+            WriteLine("<h2 id=\"files\">Files</h2>");
+
+            // Write the links to the .html files - can use a relative path since it is in the same folder
+            foreach (FileInfo file in ValidHTMLFiles)
+            {
+                WriteFileLink(file);
+            }
+
+            WriteLine("<h2 id=\"directories\">Directories</h2>");
+
+            // Write the links to the directory linker .html files - can use relative paths since it is in a sub folder
+            foreach (DirectoryInfo directory in ValidDirectories)
+            {
+                WriteDirectoryLink(directory);
+            }
+
+            UnIndent();
+            WriteLine("</div>");
+        }
+
+        #endregion
+
+        #region Body Writing Utility Functions
+
+        /// <summary>
+        /// Write the sidebar for navigation of sections for this directory linker
+        /// </summary>
+        private void WriteSideBar()
+        {
+            // Write links to all the sections in this
+            WriteLine("<nav class=\"w3-sidenav w3-white\" style=\"width:200px;\" id=\"pageSideBar\">");
+            Indent();
+
+            WriteLine("<h6 class=\"w3-center\">Sections</h6>");
+            WriteLine("<a href=\"#files\" class=\"w3-pale-blue w3-border w3-border-blue w3-hover-white w3-margin w3-padding-left\">Files</a>");
 
             foreach (FileInfo file in ValidHTMLFiles)
             {
-                // Write the links to the .html files - can use a relative path since it is in the same folder
-                WriteLine("<a href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.GetExtensionlessFileName() + "</a>");
-                WriteLine("<br/>");
+                WriteLine("<a class=\"w3-margin-left w3-small\" href=\"#" + file.GetExtensionlessFileName() + "\">" + file.GetExtensionlessFileName() + "</a>");
             }
+
+            WriteLine("<a href=\"#files\" class=\"w3-pale-blue w3-border w3-border-blue w3-hover-white w3-margin w3-padding-left\">Directory</a>");
 
             foreach (DirectoryInfo directory in ValidDirectories)
             {
-                // Write the links to the directory linker .html files - can use relative paths since it is in a sub folder
-                WriteLine("<a href=\"" + Path.Combine(directory.Name, directory.Name + LinkerString) + "\">" + directory.Name + " Directory" + "</a>");
-                WriteLine("<br/>");
+                WriteLine("<a class=\"w3-margin-left w3-small\" href=\"#" + directory.Name + "\">" + directory.Name + "</a>");
             }
+
+            UnIndent();
+            WriteLine("</nav>");
+        }
+
+        /// <summary>
+        /// Write the header section of our body which holds the title of the page.
+        /// </summary>
+        private void WritePageHeader()
+        {
+            WriteLine("<header class=\"w3-container w3-green w3-center\">");
+            WriteLine("<h1 id=\"page_title\">" + DirectoryInfo.Name + " Directory</h1>");
+            WriteLine("</header>");
+        }
+
+        private void WriteNavBar()
+        {
+            // Write one up and everything in this directory
+        }
+
+        #endregion
+
+        #region Linker Writing Utility Functions
+
+        /// <summary>
+        /// A utility function for writing a link to a file in this directory
+        /// </summary>
+        /// <param name="file"></param>
+        private void WriteFileLink(FileInfo file)
+        {
+            WriteLine("<div class=\"w3-card-4 w3-margin-top w3-margin-bottom w3-pale-blue w3-hover-blue w3-leftbar w3-border-blue\">");
+            Indent();
+                WriteLine("<a href=\"" + file.Name + "\" id=\"" + file.GetExtensionlessFileName() + "\" class=\"w3-padding-left\">" + file.GetExtensionlessFileName() + "</a>");
+            UnIndent();
+            WriteLine("</div>");
+        }
+
+        /// <summary>
+        /// A utility function for writing a link to a directory in this directory
+        /// </summary>
+        /// <param name="directory"></param>
+        private void WriteDirectoryLink(DirectoryInfo directory)
+        {
+            WriteLine("<div class=\"w3-card-4 w3-margin-top w3-margin-bottom w3-pale-green w3-hover-green w3-leftbar w3-border-green\">");
+            Indent();
+                WriteLine("<a href=\"" + Path.Combine(directory.Name, directory.Name + LinkerString) + "\" id=\"" + directory.Name + "\" class=\"w3-padding-left\">" + directory.Name + "</a>");
+            UnIndent();
+            WriteLine("</div>");
+
+            // Show links to items in this directory
         }
 
         #endregion
