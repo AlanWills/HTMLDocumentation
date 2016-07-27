@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace HTMLDocumentation
 {
@@ -14,7 +15,7 @@ namespace HTMLDocumentation
         /// <summary>
         /// The directory info for the directory we are linking
         /// </summary>
-        private DirectoryInfo DirectoryInfo { get; set; }
+        private DirectoryInfo Directory { get; set; }
 
         /// <summary>
         /// The valid html files in this directory that we wish to create links to
@@ -33,7 +34,7 @@ namespace HTMLDocumentation
         public HTMLDirectoryLinkerWriter(DirectoryInfo directoryInfo) :
             base(Path.Combine(directoryInfo.FullName, directoryInfo.Name + LinkerString))
         {
-            DirectoryInfo = directoryInfo;
+            Directory = directoryInfo;
         }
 
         #region Virtual Functions
@@ -43,11 +44,11 @@ namespace HTMLDocumentation
             base.MarshalData();
 
             // Get all files except the linker file
-            ValidHTMLFiles = new List<FileInfo>(DirectoryInfo.GetFiles("*.html", SearchOption.TopDirectoryOnly));
-            ValidHTMLFiles.RemoveAll(x => x.Name == DirectoryInfo.Name + LinkerString);
+            ValidHTMLFiles = new List<FileInfo>(Directory.GetFiles("*.html", SearchOption.TopDirectoryOnly));
+            ValidHTMLFiles.RemoveAll(x => x.Name == Directory.Name + LinkerString);
 
             // Ignore invalid directories
-            ValidDirectories = new List<DirectoryInfo>(DirectoryInfo.GetDirectories("*", SearchOption.TopDirectoryOnly));
+            ValidDirectories = new List<DirectoryInfo>(Directory.GetDirectories("*", SearchOption.TopDirectoryOnly));
             ValidDirectories.RemoveAll(x => x.ShouldIgnoreHTMLDirectory());
         }
 
@@ -58,7 +59,7 @@ namespace HTMLDocumentation
         {
             base.WriteHead();
 
-            WriteLine("<title>" + DirectoryInfo.Name + "</title>");
+            WriteLine("<title>" + Directory.Name + "</title>");
         }
 
         /// <summary>
@@ -117,7 +118,7 @@ namespace HTMLDocumentation
                 WriteLine("<a class=\"w3-margin-left w3-small\" href=\"#" + file.GetExtensionlessFileName() + "\">" + file.GetExtensionlessFileName() + "</a>");
             }
 
-            WriteLine("<a href=\"#files\" class=\"w3-pale-blue w3-border w3-border-blue w3-hover-white w3-margin w3-padding-left\">Directory</a>");
+            WriteLine("<a href=\"#files\" class=\"w3-pale-blue w3-border w3-border-blue w3-hover-white w3-margin w3-padding-left\">Directories</a>");
 
             foreach (DirectoryInfo directory in ValidDirectories)
             {
@@ -134,13 +135,42 @@ namespace HTMLDocumentation
         private void WritePageHeader()
         {
             WriteLine("<header class=\"w3-container w3-green w3-center\">");
-            WriteLine("<h1 id=\"page_title\">" + DirectoryInfo.Name + " Directory</h1>");
+            WriteLine("<h1 id=\"page_title\">" + Directory.Name + " Directory</h1>");
             WriteLine("</header>");
         }
 
+        /// <summary>
+        /// Create a navbar along the top for a link back to the parent directory linker and also 
+        /// </summary>
         private void WriteNavBar()
         {
-            // Write one up and everything in this directory
+            // Create a navbar for files in this directory
+            WriteLine("<ul class=\"w3-navbar w3-border w3-light-grey\">");
+            Indent();
+
+            // Write a link back to the linker for the directory this directory is in
+            WriteLine("<li><a class=\"w3-pale-red w3-hover-red\" href=\"..\\" + Directory.Parent.Name + LinkerString + "\">Parent Directory</a></li>");
+
+            // Write links to the other directories in the directory by writing a link to their linker page
+            // Cannot use the actual html linker files as they will not have been created
+            foreach (DirectoryInfo directory in Directory.GetDirectories("*", SearchOption.TopDirectoryOnly))
+            {
+                WriteLine("<li><a class=\"w3-pale-green w3-hover-green\" href=\"" + Path.Combine(directory.Name, directory.Name + LinkerString) + "\">" + directory.Name + "</a></li>");
+            }
+
+            // Write a link to the other files in the directory
+            // We cannot use the actual html files for this as they may not have been created yet
+            // This also means that we will not write this directory's linker file by mistake
+            List<FileInfo> filesInDir = Directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
+            filesInDir.RemoveAll(x => x.GetExtensionlessFileName() == Directory.Name + LinkerString);
+
+            foreach (FileInfo file in filesInDir)
+            {
+                WriteLine("<li><a class=\"w3-pale-blue w3-hover-blue\" href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.GetExtensionlessFileName() + "</a></li>");
+            }
+
+            UnIndent();
+            WriteLine("</ul>");
         }
 
         #endregion

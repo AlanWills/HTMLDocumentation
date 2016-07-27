@@ -25,20 +25,34 @@ namespace HTMLDocumentation
             //    DocumentAssembly(projectsPath);
             //}
 
+            CheckW3CSS();
             DocumentAssembly("");
         }
 
-        private static void DocumentAssembly(string projectPath)
+        /// <summary>
+        /// This program heavily uses styles in w3.css and if not present the output will be degraded.
+        /// We should check if we are connected to the internet and if the w3css folder does not exist, offer the option to download it (with a warning about quality loss).
+        /// If we are not connected to the internet, we attempt to find it in a predetermined location and if it does not exist display a warning about quality loss.
+        /// </summary>
+        private static void CheckW3CSS()
+        {
+            Debug.Fail("TODO - download?");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Take the path to the assembly and load it.
+        /// Then create appropriate directories before iterating over each class and directory and creating pages for them.
+        /// </summary>
+        /// <param name="assemblyPath"></param>
+        private static void DocumentAssembly(string assemblyPath)
         {
             // The full path to the dll
             DirectoryInfo codeDirectoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\..\\..");
-            string dllPath = Path.Combine(codeDirectoryInfo.FullName, projectPath);
+            string dllPath = Path.Combine(codeDirectoryInfo.FullName, assemblyPath);
             Assembly assembly = Assembly.Load("HTMLDocumentation");
             //Assembly assembly = Assembly.LoadFile(dllPath);
             Console.WriteLine("Assembly loaded successfully");
-
-            // Detect the w3 library and if not, bootstrap it
-            // TODO
 
             // The full path to the root directory of the code - we will use this to mirror the directory tree on our webpage
             HTMLWriter.CodeDirectoryInfo = codeDirectoryInfo;

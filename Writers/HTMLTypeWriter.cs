@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Xml.XPath;
 
 namespace HTMLDocumentation
@@ -166,33 +167,12 @@ namespace HTMLDocumentation
             Indent();
 
             // Write a link back to the linker for the directory this type's .cs file is in
-            FileInfo[] info = CodeDirectoryInfo.GetFiles(Type.Name + ".cs", SearchOption.AllDirectories);
-            Debug.Assert(info.Length == 1);
+            FileInfo[] infos = CodeDirectoryInfo.GetFiles(Type.Name + ".cs", SearchOption.AllDirectories);
+            Debug.Assert(infos.Length == 1);
 
             // Write the main link back to the directory linker
-            FileInfo thisTypeFileInfo = info[0];
-            WriteLine("<li><a class=\"w3-pale-green w3-hover-green\" href=\"" + thisTypeFileInfo.Directory.Name + HTMLDirectoryLinkerWriter.LinkerString + "\">" + thisTypeFileInfo.Directory.Name + "</a></li>");
-
-            // Write links to the other directories in the directory yb writing a link to their linker page
-            // Cannot use the actual html linker files as they will not have been created
-            List<DirectoryInfo> directoriesInDir = thisTypeFileInfo.Directory.GetDirectories("*", SearchOption.TopDirectoryOnly).ToList();
-            directoriesInDir.RemoveAll(x => x.FullName == thisTypeFileInfo.Directory.FullName || x.ShouldIgnoreCodeDirectory());
-            
-            foreach (DirectoryInfo directory in directoriesInDir)
-            {
-                WriteLine("<li><a class=\"w3-pale-green w3-hover-green\" href=\"" + Path.Combine(directory.Name, directory.Name + HTMLDirectoryLinkerWriter.LinkerString) + "\">" + directory.Name + "</a></li>");
-            }
-
-            // Write a link to the other files in the directory
-            // We cannot use the actual html files for this as they may not have been created yet
-            // This also means that we will not write this directory's linker file by mistake
-            List<FileInfo> filesInDir = thisTypeFileInfo.Directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
-            filesInDir.RemoveAll(x => x.FullName == thisTypeFileInfo.FullName);
-
-            foreach (FileInfo file in filesInDir)
-            {
-                WriteLine("<li><a class=\"w3-pale-blue w3-hover-blue\" href=\"" + file.GetExtensionlessFileName() + ".html\">" + file.GetExtensionlessFileName() + "</a></li>");
-            }
+            FileInfo thisTypeFileInfo = infos[0];
+            WriteLine("<li><a class=\"w3-pale-red w3-hover-red\" href=\"" + thisTypeFileInfo.Directory.Name + HTMLDirectoryLinkerWriter.LinkerString + "\">Parent Directory</a></li>");
 
             UnIndent();
             WriteLine("</ul>");
@@ -205,6 +185,7 @@ namespace HTMLDocumentation
         /// <summary>
         /// Utility function for determining whether a method should be written to this type's HTML page.
         /// Returns true if the method was declared inside the type we are writing and is not a getter or setter for a property.
+        /// The compiler also seems to generate private methods at runtime so we check to make sure we do not have one
         /// </summary>
         /// <param name="method">The method we should check to write</param>
         /// <returns>True if we should write the method and false if we should not</returns>
@@ -212,7 +193,8 @@ namespace HTMLDocumentation
         {
             return Type.Name == method.DeclaringType.Name &&
                    !method.Name.StartsWith("get_") &&
-                   !method.Name.StartsWith("set_");
+                   !method.Name.StartsWith("set_") &&
+                   method.GetCustomAttribute<CompilerGeneratedAttribute>() == null;
         }
 
         /// <summary>
@@ -279,13 +261,16 @@ namespace HTMLDocumentation
             XPathNavigator methodNode = GetXMLDocNodeForMethod(method);
             if (methodNode != null)
             {
+                List<ParameterInfo> parametersInfo = method.GetParameters().ToList();
+
                 // Construct the html for the comment on the method
                 XPathNavigator clone;
                 {
                     clone = methodNode.Clone();
                     clone.MoveToChild("summary", "");
 
-                    WriteLine("<p>" + clone.InnerXml.Trim(' ', '\r', '\n') + "</p>");
+                    WriteLine("<h6 class=\"w3-text-cyan w3-margin-top w3-margin-bottom\" style=\"margin-left:6px\">Description</h6>");
+                    WriteLine("<p class=\"w3-margin-left w3-margin-top w3-margin-bottom\">" + clone.InnerXml.Trim(' ', '\r', '\n') + "</p>");
                 }
 
                 // Construct the html for the comments on the parameters
@@ -293,18 +278,25 @@ namespace HTMLDocumentation
                     clone = methodNode.Clone();
                     XPathNodeIterator childParams = clone.SelectChildren("param", "");
 
+                    WriteLine("<h6 class=\"w3-text-deep-purple w3-margin-top w3-margin-bottom\" style=\"margin-left:6px\">Parameters</h6>");
                     while (childParams.MoveNext())
                     {
-                        WriteLine("<p>" + childParams.Current.GetAttribute("name", "") + " - " + childParams.Current.InnerXml + "</p>");
+                        string parameterName = childParams.Current.GetAttribute("name", "");
+                        Debug.Assert(parametersInfo.Exists(x => x.Name == parameterName), "TODO - add a tag in the document to indicate the name is out of date and should be updated");
+                        string parameterType = parametersInfo.Find(x => x.Name == parameterName).ParameterType.Name;
+
+                        WriteLine("<p class=\"w3-margin-left w3-margin-top w3-margin-bottom\"><span class=\"w3-tag w3-purple\"> " + parameterType + "</span>" + " '" + parameterName + "': " + childParams.Current.InnerXml + " </p>");
                     }
                 }
 
                 // Construct the html for the comment on the return type (if it exists)
                 {
+                    WriteLine("<h6 class=\"w3-text-orange w3-margin-top w3-margin-bottom\" style=\"margin-left:6px\">Returns<span class=\"w3-tag w3-margin-left w3-pale-yellow\"> " + method.ReturnType.Name + "</span></h6>");
+
                     clone = methodNode.Clone();
                     if (clone.MoveToChild("returns", ""))
                     {
-                        WriteLine("<p>returns - " + clone.InnerXml + "</p>");
+                        WriteLine("<p class=\"w3-margin-left w3-margin-top w3-margin-bottom\">" + clone.InnerXml + "</p>");
                     }
                 }
             }
@@ -329,20 +321,21 @@ namespace HTMLDocumentation
             nav.MoveToFirstChild();
             nav.MoveToChild("members", "");
 
-            string containsString = "contains (@name, '" + Type.Name + "') and contains(@name, '" + method.Name + "')";
-            int index = 0;
-            foreach (ParameterInfo parameter in method.GetParameters())
-            {
-                if (index < method.GetParameters().Length)
-                {
-                    containsString += " and ";
-                }
+            //string containsString = "contains(@name, '" + Type.Name + "') and contains(@name, '" + method.Name + "(')";
+            //int index = 0;
+            //foreach (ParameterInfo parameter in method.GetParameters())
+            //{
+            //    if (index < method.GetParameters().Length)
+            //    {
+            //        containsString += " and ";
+            //    }
 
-                containsString += "contains(@name, '" + parameter.ParameterType.Name + "')";
-                index++;
-            }
+            //    containsString += "contains(@name, '" + parameter.ParameterType.Name + "')";
+            //    index++;
+            //}
 
-            string xPath = "//member[" + containsString + "]";
+            string fullString = "contains(@name, '" + method.DeclaringType.FullName + "." + method.Name + "(')";
+            string xPath = "//member[" + fullString + "]";
             nav = nav.SelectSingleNode(xPath);
 
             return nav;
