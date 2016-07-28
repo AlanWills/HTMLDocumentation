@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -36,8 +37,52 @@ namespace HTMLDocumentation
         /// </summary>
         private static void CheckW3CSS()
         {
-            Debug.Fail("TODO - download?");
-            Console.ReadKey();
+            // Check internet connection
+            bool connectedToInternet = false;
+            using (WebClient client = new WebClient())
+            {
+                using (var stream = client.OpenRead("http://www.google.com"))
+                {
+                    if (stream != null)
+                    {
+                        connectedToInternet = true;
+                    }
+                }
+            }
+
+            string styleFileLocation = Path.Combine(Directory.GetCurrentDirectory(), "w3.css");
+            bool styleFileExists = File.Exists(styleFileLocation);
+            if (!styleFileExists)
+            {
+                if (connectedToInternet)
+                {
+                    Console.WriteLine("w3.css styling is used extensively in this program.  It cannot be detected in location: " + styleFileLocation);
+                    Console.WriteLine("Do you wish to download it now (this will allow offline previewing)? (Y/N)");
+
+                    ConsoleKeyInfo result = Console.ReadKey();
+                    if (result.KeyChar == 'Y')
+                    {
+                        using (var client = new WebClient())
+                        {
+                            client.DownloadFile("http://www.w3schools.com/lib/w3.css", "w3.css");
+                        }
+
+                        Debug.Assert(File.Exists(styleFileLocation));
+                        Console.WriteLine("File downloaded successfully and offline previewing now available");
+                    }
+                    else
+                    {
+                        Console.WriteLine("WARNING!");
+                        Console.WriteLine("Offline previewing will show extremely poor results.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("WARNING!");
+                    Console.WriteLine("w3.css styling is used extensively in this program.");
+                    Console.WriteLine("With no internet connection and no local w3.css style file, previewing will show extremely poor results.");
+                }
+            }
         }
 
         /// <summary>

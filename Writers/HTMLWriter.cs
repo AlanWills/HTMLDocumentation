@@ -78,6 +78,7 @@ namespace HTMLDocumentation
         {
             WriteLine("<meta name=\"viewport\" content=\"width = device - width, initial - scale = 1\">");
             WriteLine("<link rel=\"stylesheet\" href=\"http://www.w3schools.com/lib/w3.css\">");
+            WriteLine("<link rel=\"stylesheet\" href=\"" + Path.Combine(Directory.GetCurrentDirectory(), "w3.css") +">");
         }
 
         /// <summary>
