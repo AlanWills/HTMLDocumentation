@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace HTMLDocumentation
 {
@@ -12,22 +11,11 @@ namespace HTMLDocumentation
 
         private string Indentation { get; set; }
 
-        /// <summary>
-        /// The root directory for the directory tree our documentation will be created in.
-        /// </summary>
-        public static DirectoryInfo DocsDirectoryInfo { get; set; }
-
-        /// <summary>
-        /// The root directory for the directory tree of the .cs files in the assembly
-        /// </summary>
-        public static DirectoryInfo CodeDirectoryInfo { get; set; }
-
         #endregion
 
         public HTMLWriter(string path) :
             base(path, false)
         {
-
         }
 
         #region Virtual Functions
@@ -76,9 +64,9 @@ namespace HTMLDocumentation
         /// </summary>
         protected virtual void WriteHead()
         {
-            WriteLine("<meta name=\"viewport\" content=\"width = device - width, initial - scale = 1\">");
-            WriteLine("<link rel=\"stylesheet\" href=\"http://www.w3schools.com/lib/w3.css\">");
-            WriteLine("<link rel=\"stylesheet\" href=\"" + Path.Combine(Directory.GetCurrentDirectory(), "w3.css") +">");
+            WriteLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />");
+            WriteLine("<link rel=\"stylesheet\" href=\"http://www.w3schools.com/lib/w3.css\" />");
+            WriteLine("<link rel=\"stylesheet\" href=\"" + ContentManager.StyleFileLocation + "\" />");
         }
 
         /// <summary>

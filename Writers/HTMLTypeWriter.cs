@@ -167,7 +167,7 @@ namespace HTMLDocumentation
             Indent();
 
             // Write a link back to the linker for the directory this type's .cs file is in
-            FileInfo[] infos = CodeDirectoryInfo.GetFiles(Type.Name + ".cs", SearchOption.AllDirectories);
+            FileInfo[] infos = ContentManager.CodeDirectory.GetFiles(Type.Name + ".cs", SearchOption.AllDirectories);
             Debug.Assert(infos.Length == 1);
 
             // Write the main link back to the directory linker
@@ -200,7 +200,7 @@ namespace HTMLDocumentation
         /// <summary>
         /// Iterates over all the inputted methods.  These are guarenteed to satisfy the ShouldWriteMethod.
         /// </summary>
-        /// <param name="filterFlags"></param>
+        /// <param name="methods"></param>
         private void WriteMethods(List<MethodInfo> methods)
         {
             foreach (MethodInfo method in methods)

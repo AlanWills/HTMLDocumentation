@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -16,6 +15,8 @@ namespace HTMLDocumentation
 
         static void Main(string[] args)
         {
+            ContentManager.CheckW3CSS();
+
             Console.WriteLine("Enter the relative paths of the '.dll's you wish to document separated by a space");
 
             //string projectsString = Console.ReadLine();
@@ -25,64 +26,7 @@ namespace HTMLDocumentation
             //{
             //    DocumentAssembly(projectsPath);
             //}
-
-            CheckW3CSS();
             DocumentAssembly("");
-        }
-
-        /// <summary>
-        /// This program heavily uses styles in w3.css and if not present the output will be degraded.
-        /// We should check if we are connected to the internet and if the w3css folder does not exist, offer the option to download it (with a warning about quality loss).
-        /// If we are not connected to the internet, we attempt to find it in a predetermined location and if it does not exist display a warning about quality loss.
-        /// </summary>
-        private static void CheckW3CSS()
-        {
-            // Check internet connection
-            bool connectedToInternet = false;
-            using (WebClient client = new WebClient())
-            {
-                using (var stream = client.OpenRead("http://www.google.com"))
-                {
-                    if (stream != null)
-                    {
-                        connectedToInternet = true;
-                    }
-                }
-            }
-
-            string styleFileLocation = Path.Combine(Directory.GetCurrentDirectory(), "w3.css");
-            bool styleFileExists = File.Exists(styleFileLocation);
-            if (!styleFileExists)
-            {
-                if (connectedToInternet)
-                {
-                    Console.WriteLine("w3.css styling is used extensively in this program.  It cannot be detected in location: " + styleFileLocation);
-                    Console.WriteLine("Do you wish to download it now (this will allow offline previewing)? (Y/N)");
-
-                    ConsoleKeyInfo result = Console.ReadKey();
-                    if (result.KeyChar == 'Y')
-                    {
-                        using (var client = new WebClient())
-                        {
-                            client.DownloadFile("http://www.w3schools.com/lib/w3.css", "w3.css");
-                        }
-
-                        Debug.Assert(File.Exists(styleFileLocation));
-                        Console.WriteLine("File downloaded successfully and offline previewing now available");
-                    }
-                    else
-                    {
-                        Console.WriteLine("WARNING!");
-                        Console.WriteLine("Offline previewing will show extremely poor results.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("WARNING!");
-                    Console.WriteLine("w3.css styling is used extensively in this program.");
-                    Console.WriteLine("With no internet connection and no local w3.css style file, previewing will show extremely poor results.");
-                }
-            }
         }
 
         /// <summary>
@@ -92,43 +36,17 @@ namespace HTMLDocumentation
         /// <param name="assemblyPath"></param>
         private static void DocumentAssembly(string assemblyPath)
         {
-            // The full path to the dll
-            DirectoryInfo codeDirectoryInfo = new DirectoryInfo(Directory.GetCurrentDirectory() + "\\..\\..");
-            string dllPath = Path.Combine(codeDirectoryInfo.FullName, assemblyPath);
+            string dllPath = Path.Combine(Directory.GetCurrentDirectory(), "..\\..");
             Assembly assembly = Assembly.Load("HTMLDocumentation");
             //Assembly assembly = Assembly.LoadFile(dllPath);
             Console.WriteLine("Assembly loaded successfully");
 
-            // The full path to the root directory of the code - we will use this to mirror the directory tree on our webpage
-            HTMLWriter.CodeDirectoryInfo = codeDirectoryInfo;
-
-            // The directory where we will create the docs
+            // The directory where we will create the docs - maybe convert to user input
             string docsDirectory = Path.Combine(dllPath, assembly.GetName().Name);
 
-            if (Directory.Exists(docsDirectory))
-            {
-                // Log our deletion of the existing directory
-                Console.WriteLine("Existing documentation folder found.  Deleting and rebuilding");
-
-                // Deletes the existing documentation folder so we create a fresh one
-                Directory.Delete(docsDirectory, true);
-            }
-
-            // Log the creation of the new documentation directory
-            Console.WriteLine("Creating documentation directory: '" + assembly.GetName().Name + "'");
-
-            DirectoryInfo docsDirectoryInfo = Directory.CreateDirectory(docsDirectory);
-            HTMLWriter.DocsDirectoryInfo = docsDirectoryInfo;
-
-            //// Log the creation of the scripts directory
-            //Console.WriteLine("Creating scripts directory");
-
-            //// Create a directory in the docs directory for the scripts
-            //string scriptsDirectory = Path.Combine(docsDirectory, "Scripts");
-            //Directory.CreateDirectory(scriptsDirectory);
-
-            //// Copy the style sheets into the documentation directory and override any existing ones
-            //File.Copy(Path.Combine(dllPath, "nav_bar.js"), Path.Combine(scriptsDirectory, "nav_bar.js"), true);
+            ContentManager.SetupDirectories(docsDirectory, dllPath, assembly.GetName().Name);
+            DirectoryInfo codeDirectoryInfo = ContentManager.CodeDirectory;
+            DirectoryInfo docsDirectoryInfo = ContentManager.DocsDirectory;
 
             /*
              * ALGORITHM:

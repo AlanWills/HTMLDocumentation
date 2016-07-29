@@ -5,6 +5,10 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTMLDocumentation", "HTMLDocumentation.csproj", "{FB1196C4-83E6-411E-9394-EF779AAFC717}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHTMLDocumentation", "TestHTMLDocumentation\TestHTMLDocumentation.csproj", "{2B78EE7C-F647-4FFE-9681-8C17B10D2C2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DummyLibrary", "TestHTMLDocumentation\DummyLibrary\DummyLibrary\DummyLibrary.csproj", "{E8E730ED-14B5-4053-8EB8-175C8ED5CFF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{FB1196C4-83E6-411E-9394-EF779AAFC717}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB1196C4-83E6-411E-9394-EF779AAFC717}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB1196C4-83E6-411E-9394-EF779AAFC717}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B78EE7C-F647-4FFE-9681-8C17B10D2C2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B78EE7C-F647-4FFE-9681-8C17B10D2C2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B78EE7C-F647-4FFE-9681-8C17B10D2C2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B78EE7C-F647-4FFE-9681-8C17B10D2C2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8E730ED-14B5-4053-8EB8-175C8ED5CFF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8E730ED-14B5-4053-8EB8-175C8ED5CFF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8E730ED-14B5-4053-8EB8-175C8ED5CFF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8E730ED-14B5-4053-8EB8-175C8ED5CFF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
